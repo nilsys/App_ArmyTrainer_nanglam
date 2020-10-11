@@ -6,6 +6,9 @@
 
 ## 팀소개 및 프로잭트 설명 동영상
 
+## App 기초 UI
+<img src="./Image/SampleUI.png" width="187.5" height="406">
+</br>
 ## 기능 설계
 
 ## 컴퓨터 구성 / 필수 조건 안내 (Prerequisites)
