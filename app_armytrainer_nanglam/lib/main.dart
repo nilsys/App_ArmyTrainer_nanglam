@@ -1,4 +1,7 @@
+import 'package:app_armytrainer_nanglam/pushTab.dart';
 import 'package:flutter/material.dart';
+import 'pushTab.dart';
+import 'sitTab.dart';
 
 void main() => runApp(
       MaterialApp(
@@ -14,6 +17,10 @@ class MyApp extends StatefulWidget {
 
 class _MyApp extends State<MyApp> with TickerProviderStateMixin {
   TabController _tabController;
+  double _sizeHeight;
+  double _sizeWidth;
+  double _deviceRatio;
+  double _paddingTop;
 
   List<Widget> list = [
     Tab(
@@ -49,73 +56,68 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    _sizeHeight = MediaQuery.of(context).size.height;
+    _sizeWidth = MediaQuery.of(context).size.width;
+    _deviceRatio = MediaQuery.of(context).devicePixelRatio;
+    _paddingTop = MediaQuery.of(context).padding.top;
+    _sizeHeight -= _paddingTop;
     return Scaffold(
       backgroundColor: Color(0xff191C2B),
       appBar: null,
-      body: Column(children: [
-        SizedBox(height: 50),
-        Row(
-          children: [
-            SizedBox(
-              width: 40,
-              height: 50,
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.list,
-                color: Colors.white,
-              ),
-              onPressed: null,
-            ),
-            Expanded(
-              flex: 1,
-              child: SizedBox(height: 35),
-            ),
-            SizedBox(
-              width: 235,
-              height: 35,
-              child: TabBar(
-                tabs: list,
-                controller: _tabController,
-                indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(width: 4, color: Color(0xffE32A51)),
-                  insets: EdgeInsets.symmetric(horizontal: 35.0),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-          ],
-        ),
-        SizedBox(height: 35),
-        SizedBox(
-          width: 300,
-          height: 475,
-          child: TabBarView(
-            controller: _tabController,
+      body: SizedBox(
+        height: _sizeHeight * _deviceRatio,
+        width: _sizeWidth * _deviceRatio,
+        child: Column(children: [
+          SizedBox(height: _paddingTop + 5),
+          Row(
             children: [
-              Text(
-                '1',
-                style: TextStyle(
+              SizedBox(
+                width: 40,
+                height: 48,
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.list,
                   color: Colors.white,
-                  fontFamily: 'MainFont',
-                  fontSize: 24,
+                ),
+                onPressed: null,
+              ),
+              Expanded(
+                flex: 1,
+                child: SizedBox(height: 48),
+              ),
+              SizedBox(
+                width: 235,
+                height: 35,
+                child: TabBar(
+                  tabs: list,
+                  controller: _tabController,
+                  indicator: UnderlineTabIndicator(
+                    borderSide: BorderSide(width: 4, color: Color(0xffE32A51)),
+                    insets: EdgeInsets.symmetric(horizontal: 35.0),
+                  ),
                 ),
               ),
-              Text(
-                '2',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'MainFont',
-                  fontSize: 24,
-                ),
-              )
+              SizedBox(
+                width: 10,
+                height: 48,
+              ),
             ],
           ),
-        ),
-        SizedBox(height: 70),
-      ]),
+          SizedBox(height: _sizeHeight * 0.045),
+          SizedBox(
+            width: _sizeWidth * _deviceRatio,
+            height: _sizeHeight * 0.819,
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                PushTab(),
+                SitTab(),
+              ],
+            ),
+          ),
+        ]),
+      ),
     );
   }
 }
