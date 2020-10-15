@@ -2,6 +2,7 @@ import 'package:app_armytrainer_nanglam/pushTab.dart';
 import 'package:flutter/material.dart';
 import 'pushTab.dart';
 import 'sitTab.dart';
+import 'sidebar.dart';
 
 void main() => runApp(
       MaterialApp(
@@ -16,6 +17,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyApp extends State<MyApp> with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TabController _tabController;
   double _sizeHeight;
   double _sizeWidth;
@@ -63,6 +65,8 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
     _sizeHeight -= _paddingTop;
     return Scaffold(
       backgroundColor: Color(0xff191C2B),
+      key: _scaffoldKey,
+      drawer: NavDrawer(),
       appBar: null,
       body: SizedBox(
         height: _sizeHeight * _deviceRatio,
@@ -77,10 +81,10 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
               ),
               IconButton(
                 icon: Icon(
-                  Icons.list,
+                  Icons.bar_chart,
                   color: Colors.white,
                 ),
-                onPressed: null,
+                onPressed: () => _scaffoldKey.currentState.openDrawer(),
               ),
               Expanded(
                 flex: 1,

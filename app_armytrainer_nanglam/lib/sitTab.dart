@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:app_armytrainer_nanglam/sqlite/db_helper.dart';
+import 'package:app_armytrainer_nanglam/sqlite/models/models.dart';
 
 class SitTab extends StatefulWidget {
   @override
@@ -42,7 +44,7 @@ class _SitTab extends State<SitTab> {
                     ),
                   ),
                   Text(
-                    'Level : 30',
+                    'Today : 30',
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'MainFont',
@@ -57,10 +59,28 @@ class _SitTab extends State<SitTab> {
             height: 47,
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: _sizeWidth * 0.125,
+              ),
+              Expanded(
+                  child: SizedBox(
+                height: 47,
+              )),
+              IconButton(
+                  icon: Icon(Icons.settings, color: Colors.white),
+                  onPressed: null),
+              SizedBox(
+                width: _sizeWidth * 0.125,
+              ),
+            ],
+          ),
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '15-20-30-40-60',
+                '15-20-30-40-6',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'MainFont',
@@ -70,7 +90,7 @@ class _SitTab extends State<SitTab> {
             ],
           ),
           SizedBox(
-            height: 150,
+            height: 130,
           ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
