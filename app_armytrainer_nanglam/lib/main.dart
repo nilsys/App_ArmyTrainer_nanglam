@@ -16,7 +16,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyApp extends State<MyApp> with TickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TabController _tabController;
   double _sizeHeight;
   double _sizeWidth;
