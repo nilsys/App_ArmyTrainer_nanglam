@@ -2,7 +2,6 @@ import 'package:app_armytrainer_nanglam/pushTab.dart';
 import 'package:flutter/material.dart';
 import 'pushTab.dart';
 import 'sitTab.dart';
-import 'sidebar.dart';
 
 void main() => runApp(
       MaterialApp(
@@ -65,8 +64,6 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
     _sizeHeight -= _paddingTop;
     return Scaffold(
       backgroundColor: Color(0xff191C2B),
-      key: _scaffoldKey,
-      drawer: NavDrawer(),
       appBar: null,
       body: SizedBox(
         height: _sizeHeight * _deviceRatio,
@@ -84,7 +81,7 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
                   Icons.bar_chart,
                   color: Colors.white,
                 ),
-                onPressed: () => _scaffoldKey.currentState.openDrawer(),
+                onPressed: () {},
               ),
               Expanded(
                 flex: 1,
