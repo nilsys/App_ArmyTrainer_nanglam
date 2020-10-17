@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'pushProfileTab.dart';
 import 'sitProfileTab.dart';
+import 'editProfile.dart';
 
 class ProfileApp extends StatefulWidget {
   @override
@@ -8,9 +11,11 @@ class ProfileApp extends StatefulWidget {
 }
 
 class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
+  String _profilePath;
   TabController _tabController;
   double _sizeHeight;
   double _paddingTop;
+  String _profileName;
   List<Widget> list = [
     Tab(
       child: Text(
@@ -35,6 +40,7 @@ class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
   @override
   void initState() {
     _tabController = new TabController(vsync: this, length: list.length);
+    _loadValue();
     super.initState();
   }
 
@@ -42,6 +48,14 @@ class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  _loadValue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _profilePath = (prefs.getString('profilePath') ?? null);
+      _profileName = (prefs.getString('profileName') ?? 'Name');
+    });
   }
 
   @override
@@ -88,16 +102,21 @@ class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
                     CircleAvatar(
                       radius: 32,
                       backgroundColor: Colors.white,
-                      child: CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage('Images/newUser.png'),
-                        backgroundColor: Color(0xff191C2B),
-                      ),
+                      child: _profilePath == null
+                          ? CircleAvatar(
+                              radius: 30,
+                              backgroundImage: AssetImage('Images/user.png'),
+                              backgroundColor: Color(0xff191C2B),
+                            )
+                          : CircleAvatar(
+                              radius: 30,
+                              backgroundImage: AssetImage(_profilePath),
+                              backgroundColor: Color(0xff191C2B),
+                            ),
                     ),
-                    Row(children: [
-                      SizedBox(width: 40),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text(
-                        '낭람이',
+                        '$_profileName',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'MainFont',
@@ -165,7 +184,7 @@ class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
               shape:
                   RoundedRectangleBorder(side: BorderSide(color: Colors.white)),
               onPressed: () {
-                Navigator.of(context).pop();
+                moveToEdit();
               },
               color: Colors.white.withOpacity(0),
               child: Center(
@@ -193,5 +212,15 @@ class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  void moveToEdit() async {
+    await Navigator.push(
+      this.context,
+      CupertinoPageRoute(builder: (context) => EditProfile()),
+    );
+    setState(() {
+      _loadValue();
+    });
   }
 }

@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:all_sensors/all_sensors.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
-import 'dart:io';
 
 class PushTab extends StatefulWidget {
   @override

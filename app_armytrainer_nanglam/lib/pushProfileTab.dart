@@ -60,7 +60,7 @@ class _PushProfile extends State<PushProfile> {
                       alignment: BarChartAlignment.spaceAround,
                       maxY: 20,
                       barTouchData: BarTouchData(
-                        enabled: true,
+                        enabled: false,
                         touchTooltipData: BarTouchTooltipData(
                           tooltipBgColor: Colors.transparent,
                           tooltipPadding: const EdgeInsets.all(0),
@@ -82,9 +82,9 @@ class _PushProfile extends State<PushProfile> {
                         ),
                       ),
                       titlesData: FlTitlesData(
-                        show: true,
+                        show: false,
                         bottomTitles: SideTitles(
-                          showTitles: true,
+                          showTitles: false,
                           getTextStyles: (value) => const TextStyle(
                               color: Color(0xff7589a2),
                               fontWeight: FontWeight.bold,
