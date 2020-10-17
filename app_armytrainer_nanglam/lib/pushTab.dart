@@ -5,7 +5,6 @@ import 'package:app_armytrainer_nanglam/sqlite/models/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:all_sensors/all_sensors.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -17,7 +16,7 @@ class PushTab extends StatefulWidget {
 class _PushTab extends State<PushTab> {
   double _sizeWidth;
   int _pushRecord = 0;
-  int _pushSum = 0;
+  int _pushTotal = 0;
   int _pushLevel = 0;
   int _pushToday = 0;
   String _pushDate = '';
@@ -30,7 +29,7 @@ class _PushTab extends State<PushTab> {
       setState(() {
         String formattedDate = _formatter.format(_now);
         _pushRecord = (prefs.getInt('pushRecord') ?? 0);
-        _pushSum = (prefs.getInt('pushSum') ?? 0);
+        _pushTotal = (prefs.getInt('pushTotal') ?? 0);
         _pushLevel = (prefs.getInt('pushLevel') ?? 0);
         _pushDate = formattedDate;
         if (_pushDate != (prefs.getString('pushDate') ?? '')) {
@@ -102,9 +101,6 @@ class _PushTab extends State<PushTab> {
                   child: SizedBox(
                 height: 47,
               )),
-              IconButton(
-                  icon: Icon(Icons.settings, color: Colors.white),
-                  onPressed: null),
               SizedBox(
                 width: _sizeWidth * 0.125,
               ),
@@ -114,7 +110,23 @@ class _PushTab extends State<PushTab> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '15-20-30-40-6',
+                '10-10-10-20-30-50',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'MainFont',
+                  fontSize: 30,
+                ),
+              ),
+              Text(
+                ' / ',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'MainFont',
+                  fontSize: 30,
+                ),
+              ),
+              Text(
+                '30',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'MainFont',
@@ -227,43 +239,35 @@ class PushUpScreen extends StatefulWidget {
 }
 
 class _PushUpScreen extends State<PushUpScreen> {
-  Timer _timer;
-  int _time = 5;
   double _paddingTop;
   double _sizeHeight;
   double _sizeWidth;
+  List _routine = [10, 20, 30, 40];
   int _count = 0;
   bool _proximityValues = false;
+  bool _state = true;
+  bool _touch = false;
+  int _idx = 0;
+  int _sumcount = 0;
   List<StreamSubscription<dynamic>> _streamSubscriptions =
       <StreamSubscription<dynamic>>[];
   String _text = "";
+  void updateState(bool state) {
+    setState(() => _state = state);
+  }
 
-  void startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
-      oneSec,
-      (Timer timer) => setState(
-        () {
-          if (_time < 1) {
-            _text = "기록이 종료되었습니다.";
-            timer.cancel();
-            for (StreamSubscription<dynamic> subscription
-                in _streamSubscriptions) {
-              subscription.cancel();
-            }
-          } else {
-            _time--;
-          }
-        },
-      ),
-    );
+  void dialogScreen() async {
+    final state = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return EDialog();
+        });
+    updateState(state);
   }
 
   @override
   void dispose() {
-    if (_timer != null) {
-      _timer.cancel();
-    }
     for (StreamSubscription<dynamic> subscription in _streamSubscriptions) {
       subscription.cancel();
     }
@@ -275,12 +279,24 @@ class _PushUpScreen extends State<PushUpScreen> {
     super.initState();
     _streamSubscriptions.add(proximityEvents.listen((ProximityEvent event) {
       setState(() {
-        _proximityValues = event.getValue();
-        if (_proximityValues == true) {
-          if (_count == 0) {
-            startTimer();
+        if (_state) {
+          _proximityValues = event.getValue();
+          if (_proximityValues && !_touch) {
+            _routine[_idx]--;
+            _sumcount++;
+            if (_routine[_idx] == 0) {
+              _idx++;
+              if (_idx == _routine.length) {
+                _text = "운동이 종료되었습니다.";
+                _idx--;
+                _touch = true;
+              } else {
+                _state = false;
+                _proximityValues = false;
+                dialogScreen();
+              }
+            }
           }
-          _count++;
         }
       });
     }));
@@ -291,6 +307,7 @@ class _PushUpScreen extends State<PushUpScreen> {
     _sizeHeight = MediaQuery.of(context).size.height;
     _sizeWidth = MediaQuery.of(context).size.width;
     _paddingTop = MediaQuery.of(context).padding.top;
+    _count = _routine[_idx];
     return Scaffold(
       backgroundColor: Color(0xff191C2B),
       appBar: null,
@@ -306,8 +323,7 @@ class _PushUpScreen extends State<PushUpScreen> {
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    List _list = [_count, _time];
-                    Navigator.pop(context, _list);
+                    Navigator.pop(context, _sumcount);
                   },
                 ),
                 Expanded(
@@ -317,7 +333,7 @@ class _PushUpScreen extends State<PushUpScreen> {
                 Stack(
                   children: [
                     Text(
-                      '시간(초) : $_time',
+                      '[10-20-30-40]',
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'MainFont',
@@ -327,11 +343,11 @@ class _PushUpScreen extends State<PushUpScreen> {
                     Positioned(
                       child: Container(
                         height: 3,
-                        width: 70,
+                        width: 90,
                         color: Color(0xffE32A51),
                       ),
-                      right: 20,
-                      bottom: 2,
+                      right: 25,
+                      bottom: 0,
                     ),
                   ],
                 ),
@@ -342,12 +358,23 @@ class _PushUpScreen extends State<PushUpScreen> {
               height: _sizeHeight - 50 - _paddingTop - 5,
               child: FlatButton(
                 onPressed: () {
-                  if (_count == 0) {
-                    startTimer();
-                  }
                   setState(() {
-                    if (_proximityValues == false && _time > 0) {
-                      _count++;
+                    if ((_idx == _routine.length - 1) && _touch) {
+                      Navigator.pop(context, _sumcount);
+                    } else if (_proximityValues == false) {
+                      _routine[_idx]--;
+                      _sumcount++;
+                      if (_routine[_idx] == 0) {
+                        _idx++;
+                        if (_idx == _routine.length) {
+                          _text = "운동이 종료되었습니다.";
+                          _idx--;
+                          _touch = true;
+                        } else {
+                          _state = false;
+                          dialogScreen();
+                        }
+                      }
                     }
                   });
                 },
@@ -537,6 +564,88 @@ class _PushUpScreenR extends State<PushUpScreenR> {
         ),
         onWillPop: () {},
       ),
+    );
+  }
+}
+
+class EDialog extends StatefulWidget {
+  _EDialog createState() => new _EDialog();
+}
+
+class _EDialog extends State<EDialog> {
+  Timer _timer;
+  int _time = 30;
+  int _buildcnt = 0;
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          if (_time < 1) {
+            timer.cancel();
+            Navigator.pop(context, true);
+          } else {
+            _time = _time - 1;
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _buildcnt++;
+    if (_buildcnt == 1) {
+      startTimer();
+    }
+    return WillPopScope(
+      child: AlertDialog(
+        backgroundColor: Color(0xff191C2B),
+        title: Text(
+          'Rest Time',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'MainFont',
+            fontSize: 30,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          '$_time',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'MainFont',
+            fontSize: 30,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              if (_timer != null) {
+                _timer.cancel();
+              }
+              Navigator.pop(context, true);
+            },
+            child: Text(
+              'Skip',
+              style: TextStyle(fontSize: 20, fontFamily: 'MainFont'),
+            ),
+          ),
+        ],
+      ),
+      onWillPop: () {
+        setState(() {});
+      },
     );
   }
 }

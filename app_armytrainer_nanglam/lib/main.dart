@@ -2,6 +2,7 @@ import 'package:app_armytrainer_nanglam/pushTab.dart';
 import 'package:flutter/material.dart';
 import 'pushTab.dart';
 import 'sitTab.dart';
+import 'profileTab.dart';
 
 void main() => runApp(
       MaterialApp(
@@ -77,10 +78,16 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
               ),
               IconButton(
                 icon: Icon(
-                  Icons.list,
+                  Icons.bar_chart,
                   color: Colors.white,
                 ),
-                onPressed: null,
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileApp(),
+                      ));
+                },
               ),
               Expanded(
                 flex: 1,
