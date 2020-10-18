@@ -104,6 +104,30 @@ class DBHelper {
         : Null;
   }
 
+  getPushRoutine(int idx) async {
+    final db = await database;
+    var res =
+        await db.rawQuery('SELECT * FROM pushroutine WHERE idx = ?', [idx]);
+    return res.isNotEmpty
+        ? PushRoutine(
+            idx: res.first['idx'],
+            routine: res.first['routine'],
+            time: res.first['time'])
+        : Null;
+  }
+
+  getSitRoutine(int idx) async {
+    final db = await database;
+    var res =
+        await db.rawQuery('SELECT * FROM sitroutine WHERE idx = ?', [idx]);
+    return res.isNotEmpty
+        ? PushRoutine(
+            idx: res.first['idx'],
+            routine: res.first['routine'],
+            time: res.first['time'])
+        : Null;
+  }
+
   //Read All
   Future<List<Push>> getAllPush() async {
     final db = await database;

@@ -388,19 +388,26 @@ class _PushEDialog extends State<PushEDialog> {
     if (_routineController.text != '') {
       List _tmp = _routineController.text.split('-');
       _tmp.forEach((element) {
-        if (element != '') {
-          _saveRoutine += element.toString();
-          _saveRoutine += '-';
+        if (element != '' && element != 0) {
+          if (int.parse(element) == 0) {
+            return;
+          } else {
+            _saveRoutine += element.toString();
+            _saveRoutine += '-';
+          }
         }
       });
       if (_saveRoutine.length > 1) {
         _saveRoutine = _saveRoutine.substring(0, _saveRoutine.length - 1);
       }
-      if (_saveRoutine == '') {
-        return;
-      }
+    }
+    if (_saveRoutine == '') {
+      return;
     }
     if (_timeController.text == null) {
+      return;
+    }
+    if (int.parse(_timeController.text) == 0) {
       return;
     }
     if (_routineController.text != '' && _timeController.text != '') {
@@ -563,19 +570,26 @@ class _SitEDialog extends State<SitEDialog> {
     if (_routineController.text != '') {
       List _tmp = _routineController.text.split('-');
       _tmp.forEach((element) {
-        if (element != '') {
-          _saveRoutine += element.toString();
-          _saveRoutine += '-';
+        if (element != '' && element != 0) {
+          if (int.parse(element) == 0) {
+            return;
+          } else {
+            _saveRoutine += element.toString();
+            _saveRoutine += '-';
+          }
         }
       });
       if (_saveRoutine.length > 1) {
         _saveRoutine = _saveRoutine.substring(0, _saveRoutine.length - 1);
       }
-      if (_saveRoutine == '') {
-        return;
-      }
+    }
+    if (_saveRoutine == '') {
+      return;
     }
     if (_timeController.text == null) {
+      return;
+    }
+    if (int.parse(_timeController.text) == 0) {
       return;
     }
     if (_routineController.text != '' && _timeController.text != '') {

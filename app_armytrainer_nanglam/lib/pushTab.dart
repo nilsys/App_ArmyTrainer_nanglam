@@ -18,6 +18,8 @@ class _PushTab extends State<PushTab> {
   int _pushTotal = 0;
   int _pushLevel = 0;
   int _pushToday = 0;
+  int _idx;
+  PushRoutine _routine = PushRoutine(idx: 0, routine: '', time: 0);
   String _pushDate = '';
   var _now = new DateTime.now();
   var _formatter = new DateFormat('yyyy-MM-dd');
@@ -30,6 +32,7 @@ class _PushTab extends State<PushTab> {
         _pushRecord = (prefs.getInt('pushRecord') ?? 0);
         _pushTotal = (prefs.getInt('pushTotal') ?? 0);
         _pushLevel = (prefs.getInt('pushLevel') ?? 0);
+        _idx = (prefs.getInt('pushIdx') ?? 0);
         _pushDate = formattedDate;
         if (_pushDate != (prefs.getString('pushDate') ?? '')) {
           print(_pushToday);
@@ -40,6 +43,7 @@ class _PushTab extends State<PushTab> {
         }
         _pushToday = (prefs.getInt('pushToday') ?? 0);
       });
+    _routine = DBHelper().getPushRoutine(_idx);
   }
 
   @override
@@ -114,39 +118,11 @@ class _PushTab extends State<PushTab> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FlatButton(
-                onPressed: () async {
-                  int level = await showDialog(
-                    context: context,
-                    child: SimpleDialog(
-                      title: const Text(
-                        'Level',
-                        style: TextStyle(
-                            fontSize: 28,
-                            color: Colors.black,
-                            fontFamily: 'MainFont'),
-                      ),
-                      children: <Widget>[
-                        SimpleDialogOption(
-                          child: Text(
-                            'aaaa',
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black.withOpacity(0.6),
-                                fontFamily: 'MainFont'),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop(0);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  setState(() {});
+                onPressed: () {
+                  moveDialogScreen();
                 },
                 child: Text(
-                  '20-30-40-50',
+                  _routine.routine,
                   style: TextStyle(
                       fontSize: 34,
                       color: Colors.white.withOpacity(0.9),
@@ -220,6 +196,23 @@ class _PushTab extends State<PushTab> {
         ],
       ),
     );
+  }
+
+  void moveDialogScreen() async {
+    int idx = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return RDialog();
+        });
+    setState(() {
+      _idx = idx;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setInt('pushIdx', idx);
+    });
+    _routine = await DBHelper().getPushRoutine(_idx);
   }
 
   void moveToPushUp() async {
@@ -668,6 +661,89 @@ class _EDialog extends State<EDialog> {
             ),
           ),
         ],
+      ),
+      onWillPop: () {
+        setState(() {});
+      },
+    );
+  }
+}
+
+class RDialog extends StatefulWidget {
+  _RDialog createState() => new _RDialog();
+}
+
+class _RDialog extends State<RDialog> {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      child: FutureBuilder(
+        future: DBHelper().getAllPushRoutine(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<PushRoutine>> snapshot) {
+          if (snapshot.hasData) {
+            return AlertDialog(
+              backgroundColor: Color(0xff191C2B),
+              content: SizedBox(
+                height: 250,
+                width: 280,
+                child: ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    PushRoutine item = snapshot.data[index];
+                    return ListTile(
+                      title: FlatButton(
+                        onPressed: () {
+                          Navigator.pop(context, item.idx);
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              item.routine,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'MainFont',
+                                fontSize: 22,
+                              ),
+                            ),
+                            Text(
+                              "ㅣ",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'MainFont',
+                                fontSize: 28,
+                              ),
+                            ),
+                            Text(
+                              item.time.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'MainFont',
+                                fontSize: 22,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
       ),
       onWillPop: () {
         setState(() {});
