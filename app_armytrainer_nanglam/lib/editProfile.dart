@@ -1,8 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'dart:io';
+import 'dart:convert';
+import 'package:image/image.dart' as ImageProcess;
 
 class EditProfile extends StatefulWidget {
   @override
@@ -11,9 +16,11 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfile extends State<EditProfile> {
   double _sizeHeight;
-  String _profilePath;
-  String _profilePathBak;
   String _profileName;
+  String _profileImageBak;
+  String base64Image;
+  Uint8List _byteImage;
+  File image;
   final _nameController = TextEditingController();
   final picker = ImagePicker();
 
@@ -21,14 +28,13 @@ class _EditProfile extends State<EditProfile> {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     setState(() {
       if (pickedFile != null) {
-        _profilePath = pickedFile.path;
-      } else {
-        _profilePath = null;
+        //image = File(pickedFile.path);
+        final _imageFile = ImageProcess.decodeImage(
+          image.readAsBytesSync(),
+        );
+        base64Image = base64Encode(ImageProcess.encodePng(_imageFile));
+        _byteImage = Base64Decoder().convert(base64Image);
       }
-    });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      prefs.setString('profilePath', _profilePath);
     });
   }
 
@@ -36,9 +42,12 @@ class _EditProfile extends State<EditProfile> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     setState(() {
       if (pickedFile != null) {
-        _profilePath = pickedFile.path;
-      } else {
-        _profilePath = null;
+        //image = File(pickedFile.path);
+        final _imageFile = ImageProcess.decodeImage(
+          image.readAsBytesSync(),
+        );
+        base64Image = base64Encode(ImageProcess.encodePng(_imageFile));
+        _byteImage = Base64Decoder().convert(base64Image);
       }
     });
   }
@@ -46,7 +55,7 @@ class _EditProfile extends State<EditProfile> {
   _saveValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      prefs.setString('profilePath', _profilePath);
+      prefs.setString('profileImage', base64Image);
       prefs.setString('profileName', _profileName);
     });
   }
@@ -54,8 +63,13 @@ class _EditProfile extends State<EditProfile> {
   _loadValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _profilePath = (prefs.getString('profilePath') ?? null);
-      _profilePathBak = (prefs.getString('profilePath') ?? null);
+      base64Image = (prefs.getString('profileImage') ?? null);
+      if (base64Image != null) {
+        _byteImage = Base64Decoder().convert(base64Image);
+      } else {
+        _byteImage = null;
+      }
+      _profileImageBak = (prefs.getString('profileImage') ?? null);
       _profileName = (prefs.getString('profileName') ?? 'Name');
     });
   }
@@ -63,7 +77,7 @@ class _EditProfile extends State<EditProfile> {
   _cancleValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      prefs.setString('profilePath', _profilePathBak);
+      prefs.setString('profileImage', _profileImageBak);
     });
   }
 
@@ -166,7 +180,7 @@ class _EditProfile extends State<EditProfile> {
                     CircleAvatar(
                       radius: 42,
                       backgroundColor: Colors.white,
-                      child: _profilePath == null
+                      child: _byteImage == null
                           ? CircleAvatar(
                               radius: 40,
                               backgroundImage: AssetImage('Images/user.png'),
@@ -174,7 +188,7 @@ class _EditProfile extends State<EditProfile> {
                             )
                           : CircleAvatar(
                               radius: 40,
-                              backgroundImage: AssetImage(_profilePath),
+                              backgroundImage: MemoryImage(_byteImage),
                               backgroundColor: Color(0xff191C2B),
                             ),
                     ),
@@ -227,101 +241,6 @@ class _EditProfile extends State<EditProfile> {
                     }),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 8.0),
-                  child: TextField(
-                    //controller: _bioController,
-                    decoration: InputDecoration(
-                      labelText: 'Bio',
-                      labelStyle: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'MainFont',
-                        fontSize: 24,
-                      ),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                    ),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'MainFont',
-                      fontSize: 22,
-                    ),
-                    cursorColor: Colors.white,
-                    onChanged: ((value) {
-                      setState(() {
-                        //  _bioController.text = value;
-                      });
-                    }),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 8.0),
-                  child: TextField(
-                    //  controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email address',
-                      labelStyle: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'MainFont',
-                        fontSize: 24,
-                      ),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                    ),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'MainFont',
-                      fontSize: 22,
-                    ),
-                    cursorColor: Colors.white,
-                    onChanged: ((value) {
-                      setState(() {
-                        //    _emailController.text = value;
-                      });
-                    }),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 8.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      labelStyle: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'MainFont',
-                        fontSize: 24,
-                      ),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                    ),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'MainFont',
-                      fontSize: 22,
-                    ),
-                    cursorColor: Colors.white,
-                    onChanged: ((value) {
-                      setState(() {
-                        //  _phoneController.text = value;
-                      });
-                    }),
-                  ),
-                )
               ],
             ),
           ],

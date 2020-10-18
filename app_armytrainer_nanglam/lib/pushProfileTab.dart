@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:app_armytrainer_nanglam/sqlite/db_helper.dart';
+import 'package:app_armytrainer_nanglam/sqlite/models/models.dart';
+import 'package:all_sensors/all_sensors.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
 
 class PushProfile extends StatefulWidget {
   @override
@@ -9,6 +16,34 @@ class PushProfile extends StatefulWidget {
 class _PushProfile extends State<PushProfile> {
   double _sizeWidth;
   double _sizeHeight;
+  int _pushTotal = 0;
+  int _pushLevel = 0;
+  int _pushToday = 0;
+  String _pushDate = '';
+  var _now = new DateTime.now();
+  var _formatter = new DateFormat('yyyy-MM-dd');
+
+  _loadValue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (mounted)
+      setState(() {
+        String formattedDate = _formatter.format(_now);
+        _pushTotal = (prefs.getInt('pushTotal') ?? 0);
+        _pushLevel = (prefs.getInt('pushLevel') ?? 0);
+        _pushDate = formattedDate;
+        if (_pushDate != (prefs.getString('pushDate') ?? '')) {
+          prefs.setString('pushDate', _pushDate);
+          prefs.setInt('pushToday', 0);
+        }
+        _pushToday = (prefs.getInt('pushToday') ?? 0);
+      });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadValue();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +59,7 @@ class _PushProfile extends State<PushProfile> {
             children: [
               SizedBox(width: _sizeWidth * 0.045),
               Text(
-                'Total : 328',
+                'Total : $_pushTotal',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'MainFont',
@@ -37,7 +72,7 @@ class _PushProfile extends State<PushProfile> {
             children: [
               SizedBox(width: _sizeWidth * 0.045),
               Text(
-                'Today : 148',
+                'Today : $_pushToday',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'MainFont',
@@ -84,7 +119,7 @@ class _PushProfile extends State<PushProfile> {
                       titlesData: FlTitlesData(
                         show: false,
                         bottomTitles: SideTitles(
-                          showTitles: false,
+                          showTitles: true,
                           getTextStyles: (value) => const TextStyle(
                               color: Color(0xff7589a2),
                               fontWeight: FontWeight.bold,

@@ -32,20 +32,25 @@ class _PushTab extends State<PushTab> {
         _pushLevel = (prefs.getInt('pushLevel') ?? 0);
         _pushDate = formattedDate;
         if (_pushDate != (prefs.getString('pushDate') ?? '')) {
+          print(_pushToday);
           prefs.setString('pushDate', _pushDate);
           prefs.setInt('pushToday', 0);
           DBHelper().createPushData(
               Push(date: _pushDate, countRecord: 0, countLevel: 0));
-          print('DBHelper');
         }
-        _pushToday = (prefs.getInt('pushT') ?? 0);
+        _pushToday = (prefs.getInt('pushToday') ?? 0);
       });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadValue();
   }
 
   @override
   Widget build(BuildContext context) {
     _sizeWidth = MediaQuery.of(context).size.width;
-    _loadValue();
     return Scaffold(
       backgroundColor: Color(0xff191C2B),
       appBar: null,
@@ -109,23 +114,7 @@ class _PushTab extends State<PushTab> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '10-10-10-20-30-50',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'MainFont',
-                  fontSize: 30,
-                ),
-              ),
-              Text(
-                ' / ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'MainFont',
-                  fontSize: 30,
-                ),
-              ),
-              Text(
-                '30',
+                'Not Found',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'MainFont',
@@ -216,6 +205,10 @@ class _PushTab extends State<PushTab> {
     );
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      _pushToday += _list[0];
+      prefs.setInt('pushToday', _pushToday);
+      _pushTotal += _list[0];
+      prefs.setInt('pushTotal', _pushTotal);
       if (_list[1] == 0) {
         _pushRecord = (prefs.getInt('pushRecord') ?? 0);
         if (_pushRecord < _list[0]) {
