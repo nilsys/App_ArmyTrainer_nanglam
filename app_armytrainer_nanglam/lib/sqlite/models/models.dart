@@ -25,3 +25,31 @@ class Sit {
     };
   }
 }
+
+class PushRoutine {
+  int idx;
+  String routine;
+  int time;
+  PushRoutine({this.idx, this.routine, this.time});
+  Map<String, dynamic> toMap() {
+    return {
+      'idx': idx,
+      'routine': routine,
+      'time': time,
+    };
+  }
+}
+
+class SitRoutine {
+  int idx;
+  String routine;
+  int time;
+  SitRoutine({this.idx, this.routine, this.time});
+  Map<String, dynamic> toMap() {
+    return {
+      'idx': idx,
+      'routine': routine,
+      'time': time,
+    };
+  }
+}

@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -79,6 +78,7 @@ class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
     _sizeHeight = MediaQuery.of(context).size.height;
     _paddingTop = MediaQuery.of(context).padding.top;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xff191C2B),
       appBar: null,
       body: Column(

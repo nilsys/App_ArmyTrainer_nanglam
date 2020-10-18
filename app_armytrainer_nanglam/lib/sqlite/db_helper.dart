@@ -35,6 +35,20 @@ class DBHelper {
             countLevel INTEGER
           )
         ''');
+      await db.execute('''
+          CREATE TABLE pushroutine(
+            idx INTEGER PRIMARY KEY,
+            routine TEXT,
+            time INTEGER
+          )
+        ''');
+      await db.execute('''
+          CREATE TABLE sitroutine(
+            idx INTEGER PRIMARY KEY,
+            routine TEXT,
+            time INTEGER
+          )
+        ''');
     }, onUpgrade: (db, oldVersion, newVersion) {});
   }
 
@@ -50,6 +64,20 @@ class DBHelper {
     final db = await database;
     var res = await db.rawInsert('INSERT INTO sit VALUES(?, ?, ?)',
         [sit.date, sit.countRecord, sit.countLevel]);
+    return res;
+  }
+
+  createPushRoutineData(PushRoutine pushRoutine) async {
+    final db = await database;
+    var res = await db.rawInsert('INSERT INTO pushroutine VALUES(?, ?, ?)',
+        [pushRoutine.idx, pushRoutine.routine, pushRoutine.time]);
+    return res;
+  }
+
+  createSitRoutineData(SitRoutine sitRoutine) async {
+    final db = await database;
+    var res = await db.rawInsert('INSERT INTO sitroutine VALUES(?, ?, ?)',
+        [sitRoutine.idx, sitRoutine.routine, sitRoutine.time]);
     return res;
   }
 
@@ -105,6 +133,30 @@ class DBHelper {
     return list;
   }
 
+  Future<List<PushRoutine>> getAllPushRoutine() async {
+    final db = await database;
+    var res = await db.rawQuery('SELECT * FROM pushroutine');
+    List<PushRoutine> list = res.isNotEmpty
+        ? res
+            .map((c) => PushRoutine(
+                idx: c['idx'], routine: c['routine'], time: c['time']))
+            .toList()
+        : [];
+    return list;
+  }
+
+  Future<List<SitRoutine>> getAllSitRoutine() async {
+    final db = await database;
+    var res = await db.rawQuery('SELECT * FROM sitroutine');
+    List<SitRoutine> list = res.isNotEmpty
+        ? res
+            .map((c) => SitRoutine(
+                idx: c['idx'], routine: c['routine'], time: c['time']))
+            .toList()
+        : [];
+    return list;
+  }
+
   //Update
   updatePush(Push push) async {
     final db = await database;
@@ -119,6 +171,19 @@ class DBHelper {
     var res = db.rawUpdate(
         'UPDATE sit SET countRecord = ?, countLevel = ? WHERE date = ?',
         [sit.countRecord, sit.countLevel, sit.date]);
+    return res;
+  }
+
+  //Delete
+  deletePushRoutine(int idx) async {
+    final db = await database;
+    var res = db.rawDelete('DELETE FROM pushroutine WHERE idx = ?', [idx]);
+    return res;
+  }
+
+  deleteSitRoutine(int idx) async {
+    final db = await database;
+    var res = db.rawDelete('DELETE FROM sitroutine WHERE idx = ?', [idx]);
     return res;
   }
 }

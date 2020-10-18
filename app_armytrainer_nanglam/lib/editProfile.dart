@@ -28,7 +28,7 @@ class _EditProfile extends State<EditProfile> {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     setState(() {
       if (pickedFile != null) {
-        //image = File(pickedFile.path);
+        image = File(pickedFile.path);
         final _imageFile = ImageProcess.decodeImage(
           image.readAsBytesSync(),
         );
@@ -42,7 +42,7 @@ class _EditProfile extends State<EditProfile> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     setState(() {
       if (pickedFile != null) {
-        //image = File(pickedFile.path);
+        image = File(pickedFile.path);
         final _imageFile = ImageProcess.decodeImage(
           image.readAsBytesSync(),
         );
@@ -139,6 +139,7 @@ class _EditProfile extends State<EditProfile> {
   Widget build(BuildContext context) {
     _sizeHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xff191C2B),
       appBar: AppBar(
         backgroundColor: Color(0xff191C2B),
@@ -215,6 +216,12 @@ class _EditProfile extends State<EditProfile> {
                   child: TextField(
                     controller: _nameController,
                     decoration: InputDecoration(
+                      hintText: '$_profileName',
+                      hintStyle: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontFamily: 'MainFont',
+                        fontSize: 18,
+                      ),
                       labelText: 'Name',
                       labelStyle: TextStyle(
                         color: Colors.white,

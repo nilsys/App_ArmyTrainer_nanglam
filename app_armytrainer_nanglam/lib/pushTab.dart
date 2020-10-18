@@ -81,7 +81,7 @@ class _PushTab extends State<PushTab> {
                     ),
                   ),
                   Text(
-                    'Level : $_pushLevel',
+                    'Today : $_pushToday',
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'MainFont',
@@ -113,12 +113,44 @@ class _PushTab extends State<PushTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Not Found',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'MainFont',
-                  fontSize: 30,
+              FlatButton(
+                onPressed: () async {
+                  int level = await showDialog(
+                    context: context,
+                    child: SimpleDialog(
+                      title: const Text(
+                        'Level',
+                        style: TextStyle(
+                            fontSize: 28,
+                            color: Colors.black,
+                            fontFamily: 'MainFont'),
+                      ),
+                      children: <Widget>[
+                        SimpleDialogOption(
+                          child: Text(
+                            'aaaa',
+                            style: TextStyle(
+                                fontSize: 24,
+                                color: Colors.black.withOpacity(0.6),
+                                fontFamily: 'MainFont'),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(0);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  setState(() {});
+                },
+                child: Text(
+                  '20-30-40-50',
+                  style: TextStyle(
+                      fontSize: 34,
+                      color: Colors.white.withOpacity(0.9),
+                      fontFamily: 'MainFont'),
                 ),
               ),
             ],
@@ -567,7 +599,7 @@ class EDialog extends StatefulWidget {
 class _EDialog extends State<EDialog> {
   Timer _timer;
   int _time = 30;
-  int _buildcnt = 0;
+
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
@@ -594,11 +626,13 @@ class _EDialog extends State<EDialog> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _buildcnt++;
-    if (_buildcnt == 1) {
-      startTimer();
-    }
     return WillPopScope(
       child: AlertDialog(
         backgroundColor: Color(0xff191C2B),
