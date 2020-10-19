@@ -12,17 +12,37 @@ class PushTab extends StatefulWidget {
   _PushTab createState() => _PushTab();
 }
 
-class _PushTab extends State<PushTab> {
+class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   double _sizeWidth;
   int _pushRecord = 0;
   int _pushTotal = 0;
   int _pushLevel = 0;
   int _pushToday = 0;
   int _idx;
+  String exception;
   PushRoutine _routine = PushRoutine(idx: 0, routine: '', time: 0);
   String _pushDate = '';
   var _now = new DateTime.now();
   var _formatter = new DateFormat('yyyy-MM-dd');
+
+  Future<PushRoutine> _loadRoutine() async {
+    List list = await _fetchList();
+    if (list.length > 0) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].idx == _idx) {
+          return await DBHelper().getPushRoutine(_idx);
+        }
+      }
+      _idx = list[0].idx;
+      return await DBHelper().getPushRoutine(_idx);
+    }
+  }
+
+  Future<List> _fetchList() {
+    return DBHelper().getAllPushRoutine();
+  }
 
   _loadValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -43,18 +63,19 @@ class _PushTab extends State<PushTab> {
         }
         _pushToday = (prefs.getInt('pushToday') ?? 0);
       });
-    _routine = DBHelper().getPushRoutine(_idx);
   }
 
   @override
   void initState() {
     super.initState();
     _loadValue();
+    _loadRoutine();
   }
 
   @override
   Widget build(BuildContext context) {
     _sizeWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Color(0xff191C2B),
       appBar: null,
@@ -120,13 +141,33 @@ class _PushTab extends State<PushTab> {
               FlatButton(
                 onPressed: () {
                   moveDialogScreen();
+                  setState(() {});
                 },
-                child: Text(
-                  _routine.routine,
-                  style: TextStyle(
-                      fontSize: 34,
-                      color: Colors.white.withOpacity(0.9),
-                      fontFamily: 'MainFont'),
+                child: FutureBuilder(
+                  future: _loadRoutine(),
+                  builder: (context, AsyncSnapshot<PushRoutine> snapshot) {
+                    if (snapshot.hasData == false) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: Text(
+                        "Not Found",
+                        style: TextStyle(
+                            fontSize: 34,
+                            color: Colors.white.withOpacity(0.9),
+                            fontFamily: 'MainFont'),
+                      ));
+                    } else {
+                      return Center(
+                          child: Text(
+                        snapshot.data.routine,
+                        style: TextStyle(
+                            fontSize: 34,
+                            color: Colors.white.withOpacity(0.9),
+                            fontFamily: 'MainFont'),
+                      ));
+                    }
+                  },
                 ),
               ),
             ],
@@ -206,21 +247,41 @@ class _PushTab extends State<PushTab> {
           return RDialog();
         });
     setState(() {
-      _idx = idx;
+      if (idx != null) {
+        _idx = idx;
+      }
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      prefs.setInt('pushIdx', idx);
-    });
-    _routine = await DBHelper().getPushRoutine(_idx);
+    if (idx != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        prefs.setInt('pushIdx', idx);
+      });
+      _routine = await DBHelper().getPushRoutine(_idx);
+    }
   }
 
   void moveToPushUp() async {
-    final count = await Navigator.push(
-      this.context,
-      CupertinoPageRoute(builder: (context) => PushUpScreen()),
-    );
-    setState(() {});
+    if (_routine != null) {
+      final count = await Navigator.push(
+        this.context,
+        CupertinoPageRoute(
+          builder: (context) => PushUpScreen(),
+          settings: RouteSettings(arguments: _routine),
+        ),
+      );
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        _pushToday = (prefs.getInt('pushToday') ?? 0);
+        _pushToday += count;
+        prefs.setInt('pushToday', _pushToday);
+        _pushTotal = (prefs.getInt('pushTotal') ?? 0);
+        _pushTotal += count;
+        prefs.setInt('pushTotal', _pushTotal);
+      });
+      Push _res = await DBHelper().getPush(_pushDate);
+      _res.countLevel += count;
+      DBHelper().updatePush(_res);
+    }
   }
 
   moveToPushUpR() async {
@@ -230,8 +291,10 @@ class _PushTab extends State<PushTab> {
     );
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      _pushToday = (prefs.getInt('pushToday') ?? 0);
       _pushToday += _list[0];
       prefs.setInt('pushToday', _pushToday);
+      _pushTotal = (prefs.getInt('pushTotal') ?? 0);
       _pushTotal += _list[0];
       prefs.setInt('pushTotal', _pushTotal);
       if (_list[1] == 0) {
@@ -259,13 +322,15 @@ class _PushUpScreen extends State<PushUpScreen> {
   double _paddingTop;
   double _sizeHeight;
   double _sizeWidth;
-  List _routine = [10, 20, 30, 40];
   int _count = 0;
   bool _proximityValues = false;
   bool _state = true;
   bool _touch = false;
   int _idx = 0;
   int _sumcount = 0;
+  int _buildcnt = 0;
+  PushRoutine routine;
+  List<int> _routine = List<int>();
   List<StreamSubscription<dynamic>> _streamSubscriptions =
       <StreamSubscription<dynamic>>[];
   String _text = "";
@@ -273,12 +338,19 @@ class _PushUpScreen extends State<PushUpScreen> {
     setState(() => _state = state);
   }
 
+  _stringToList() {
+    List _tmp = routine.routine.split('-');
+    _tmp.forEach((element) {
+      _routine.add(int.parse(element));
+    });
+  }
+
   void dialogScreen() async {
     final state = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (_) {
-          return EDialog();
+          return EDialog(routine.time);
         });
     updateState(state);
   }
@@ -321,10 +393,16 @@ class _PushUpScreen extends State<PushUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    routine = ModalRoute.of(context).settings.arguments;
+    if (_buildcnt == 0) {
+      _stringToList();
+      _buildcnt++;
+    }
     _sizeHeight = MediaQuery.of(context).size.height;
     _sizeWidth = MediaQuery.of(context).size.width;
     _paddingTop = MediaQuery.of(context).padding.top;
     _count = _routine[_idx];
+
     return Scaffold(
       backgroundColor: Color(0xff191C2B),
       appBar: null,
@@ -350,7 +428,7 @@ class _PushUpScreen extends State<PushUpScreen> {
                 Stack(
                   children: [
                     Text(
-                      '[10-20-30-40]',
+                      '[' + routine.routine + ']',
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'MainFont',
@@ -586,12 +664,21 @@ class _PushUpScreenR extends State<PushUpScreenR> {
 }
 
 class EDialog extends StatefulWidget {
-  _EDialog createState() => new _EDialog();
+  int _time;
+  EDialog(int time) {
+    this._time = time;
+  }
+  @override
+  _EDialog createState() => new _EDialog(_time);
 }
 
 class _EDialog extends State<EDialog> {
   Timer _timer;
-  int _time = 30;
+  int _time;
+
+  _EDialog(int time) {
+    this._time = time;
+  }
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -739,6 +826,14 @@ class _RDialog extends State<RDialog> {
                   },
                 ),
               ),
+              actions: [
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context, null);
+                  },
+                  child: Icon(Icons.check, color: Colors.blueAccent),
+                ),
+              ],
             );
           } else {
             return Center(child: CircularProgressIndicator());

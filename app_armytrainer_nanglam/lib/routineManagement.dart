@@ -136,12 +136,15 @@ class _RoutineManagement extends State<RoutineManagement> {
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
                       PushRoutine item = snapshot.data[index];
-                      _savePushValue(item.idx);
+                      _indexPush = item.idx;
+                      _savePushValue(_indexPush);
                       return Dismissible(
                         key: UniqueKey(),
                         onDismissed: (direction) {
-                          DBHelper().deletePushRoutine(item.idx);
-                          setState(() {});
+                          if (snapshot.data.length >= 2) {
+                            DBHelper().deletePushRoutine(item.idx);
+                            setState(() {});
+                          }
                         },
                         child: ListTile(
                           leading: Text(
@@ -184,8 +187,10 @@ class _RoutineManagement extends State<RoutineManagement> {
                             icon: Icon(Icons.clear),
                             color: Colors.redAccent,
                             onPressed: () {
-                              DBHelper().deletePushRoutine(item.idx);
-                              setState(() {});
+                              if (snapshot.data.length >= 2) {
+                                DBHelper().deletePushRoutine(item.idx);
+                                setState(() {});
+                              }
                             },
                           ),
                         ),
@@ -231,7 +236,11 @@ class _RoutineManagement extends State<RoutineManagement> {
                 child: SizedBox(width: 10),
               ),
               IconButton(
-                icon: Icon(Icons.add, color: Colors.white, size: 30),
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 30,
+                ),
                 onPressed: () {
                   dialogSitScreen();
                   setState(() {});
@@ -258,15 +267,15 @@ class _RoutineManagement extends State<RoutineManagement> {
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
                       SitRoutine item = snapshot.data[index];
-                      _saveSitValue(item.idx);
+                      _indexSit = item.idx;
+                      _saveSitValue(_indexSit);
                       return Dismissible(
                         key: UniqueKey(),
                         onDismissed: (direction) {
-                          DBHelper().deletePushRoutine(item.idx);
-                          setState(() {
-                            dialogSitScreen();
+                          if (snapshot.data.length >= 2) {
+                            DBHelper().deleteSitRoutine(item.idx);
                             setState(() {});
-                          });
+                          }
                         },
                         child: ListTile(
                           leading: Text(
@@ -309,8 +318,10 @@ class _RoutineManagement extends State<RoutineManagement> {
                             icon: Icon(Icons.clear),
                             color: Colors.redAccent,
                             onPressed: () {
-                              DBHelper().deleteSitRoutine(item.idx);
-                              setState(() {});
+                              if (snapshot.data.length >= 2) {
+                                DBHelper().deleteSitRoutine(item.idx);
+                                setState(() {});
+                              }
                             },
                           ),
                         ),
@@ -404,7 +415,7 @@ class _PushEDialog extends State<PushEDialog> {
     if (_saveRoutine == '') {
       return;
     }
-    if (_timeController.text == null) {
+    if (_timeController.text == '') {
       return;
     }
     if (int.parse(_timeController.text) == 0) {

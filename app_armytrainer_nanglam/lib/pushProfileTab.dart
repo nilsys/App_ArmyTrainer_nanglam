@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:app_armytrainer_nanglam/sqlite/db_helper.dart';
 import 'package:app_armytrainer_nanglam/sqlite/models/models.dart';
-import 'package:all_sensors/all_sensors.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 
@@ -17,7 +16,6 @@ class _PushProfile extends State<PushProfile> {
   double _sizeWidth;
   double _sizeHeight;
   int _pushTotal = 0;
-  int _pushLevel = 0;
   int _pushToday = 0;
   String _pushDate = '';
   var _now = new DateTime.now();
@@ -29,7 +27,6 @@ class _PushProfile extends State<PushProfile> {
       setState(() {
         String formattedDate = _formatter.format(_now);
         _pushTotal = (prefs.getInt('pushTotal') ?? 0);
-        _pushLevel = (prefs.getInt('pushLevel') ?? 0);
         _pushDate = formattedDate;
         if (_pushDate != (prefs.getString('pushDate') ?? '')) {
           prefs.setString('pushDate', _pushDate);
@@ -39,10 +36,19 @@ class _PushProfile extends State<PushProfile> {
       });
   }
 
+  // Future<Push> _fetchPush() {
+  //   return await DBHelper().getPush(_pushDate);
+  // }
+
+  // _loadToday() async {
+  //   Future<Push> push = await _fetchPush();
+  // }
+
   @override
   void initState() {
     super.initState();
     _loadValue();
+    //_loadToday();
   }
 
   @override
@@ -117,7 +123,7 @@ class _PushProfile extends State<PushProfile> {
                         ),
                       ),
                       titlesData: FlTitlesData(
-                        show: false,
+                        show: true,
                         bottomTitles: SideTitles(
                           showTitles: true,
                           getTextStyles: (value) => const TextStyle(
@@ -128,32 +134,32 @@ class _PushProfile extends State<PushProfile> {
                           getTitles: (double value) {
                             switch (value.toInt()) {
                               case 0:
-                                return '7';
-                              case 1:
-                                return '8';
-                              case 2:
-                                return '9';
-                              case 3:
-                                return '10';
-                              case 4:
-                                return '11';
-                              case 5:
-                                return '12';
-                              case 6:
                                 return '6';
+                              case 1:
+                                return '7';
+                              case 2:
+                                return '8';
+                              case 3:
+                                return '9';
+                              case 4:
+                                return '10';
+                              case 5:
+                                return '11';
+                              case 6:
+                                return '12';
                               default:
                                 return '';
                             }
                           },
                         ),
-                        leftTitles: SideTitles(showTitles: true),
+                        leftTitles: SideTitles(showTitles: false),
                       ),
                       borderData: FlBorderData(
                         show: false,
                       ),
                       barGroups: [
                         BarChartGroupData(
-                          x: 6,
+                          x: 0,
                           barRods: [
                             BarChartRodData(
                               y: 8,
@@ -171,20 +177,9 @@ class _PushProfile extends State<PushProfile> {
                           showingTooltipIndicators: [0],
                         ),
                         BarChartGroupData(
-                          x: 0,
-                          barRods: [
-                            BarChartRodData(y: 10, colors: [
-                              Color(0xffE32A51),
-                              Colors.red,
-                              Colors.redAccent,
-                            ])
-                          ],
-                          showingTooltipIndicators: [0],
-                        ),
-                        BarChartGroupData(
                           x: 1,
                           barRods: [
-                            BarChartRodData(y: 14, colors: [
+                            BarChartRodData(y: 10, colors: [
                               Color(0xffE32A51),
                               Colors.red,
                               Colors.redAccent,
@@ -195,7 +190,7 @@ class _PushProfile extends State<PushProfile> {
                         BarChartGroupData(
                           x: 2,
                           barRods: [
-                            BarChartRodData(y: 1, colors: [
+                            BarChartRodData(y: 14, colors: [
                               Color(0xffE32A51),
                               Colors.red,
                               Colors.redAccent,
@@ -206,7 +201,7 @@ class _PushProfile extends State<PushProfile> {
                         BarChartGroupData(
                           x: 3,
                           barRods: [
-                            BarChartRodData(y: 13, colors: [
+                            BarChartRodData(y: 1, colors: [
                               Color(0xffE32A51),
                               Colors.red,
                               Colors.redAccent,
@@ -217,7 +212,7 @@ class _PushProfile extends State<PushProfile> {
                         BarChartGroupData(
                           x: 4,
                           barRods: [
-                            BarChartRodData(y: 10, colors: [
+                            BarChartRodData(y: 13, colors: [
                               Color(0xffE32A51),
                               Colors.red,
                               Colors.redAccent,
@@ -227,6 +222,17 @@ class _PushProfile extends State<PushProfile> {
                         ),
                         BarChartGroupData(
                           x: 5,
+                          barRods: [
+                            BarChartRodData(y: 10, colors: [
+                              Color(0xffE32A51),
+                              Colors.red,
+                              Colors.redAccent,
+                            ])
+                          ],
+                          showingTooltipIndicators: [0],
+                        ),
+                        BarChartGroupData(
+                          x: 6,
                           barRods: [
                             BarChartRodData(y: 2, colors: [
                               Color(0xffE32A51),

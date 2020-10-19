@@ -1,5 +1,6 @@
 import 'package:app_armytrainer_nanglam/pushTab.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'pushTab.dart';
 import 'sitTab.dart';
 import 'profileTab.dart';
@@ -22,6 +23,7 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
   double _sizeWidth;
   double _deviceRatio;
   double _paddingTop;
+  var _nothing;
 
   List<Widget> list = [
     Tab(
@@ -43,9 +45,20 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
       ),
     ))
   ];
+
+  _loadValue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      bool key = (prefs.getBool('key') ?? false);
+      if (key != true) {}
+      prefs.setBool('key', true);
+    });
+  }
+
   @override
   void initState() {
-    _tabController = new TabController(vsync: this, length: list.length);
+    _tabController = TabController(vsync: this, length: list.length);
+    _loadValue();
     super.initState();
   }
 
@@ -86,7 +99,9 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ProfileApp(),
-                      ));
+                      )).then((value) => setState(() {
+                        _nothing = value;
+                      }));
                 },
               ),
               Expanded(
