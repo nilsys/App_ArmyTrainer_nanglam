@@ -1,5 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:app_armytrainer_nanglam/sqlite/db_helper.dart';
+import 'package:app_armytrainer_nanglam/sqlite/models/models.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:image/image.dart' as ImageProcess;
+import 'main.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -21,8 +25,21 @@ class _EditProfile extends State<EditProfile> {
   String base64Image;
   Uint8List _byteImage;
   File image;
+  int _profileAge;
+  String dropdownValueSex;
+  String dropdownValueJob;
   final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
   final picker = ImagePicker();
+
+  void dialogScreen() async {
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return EDialog();
+        });
+  }
 
   Future _imgFromCamera() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
@@ -52,11 +69,25 @@ class _EditProfile extends State<EditProfile> {
     });
   }
 
+  bool _check() {
+    if (_nameController.text != '' &&
+        _ageController.text != '' &&
+        dropdownValueJob != null &&
+        dropdownValueSex != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   _saveValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       prefs.setString('profileImage', base64Image);
-      prefs.setString('profileName', _profileName);
+      prefs.setString('profileName', _nameController.text);
+      prefs.setInt('profileAge', int.parse(_ageController.text));
+      prefs.setString('profileJob', dropdownValueJob);
+      prefs.setString('profileSex', dropdownValueSex);
     });
   }
 
@@ -71,6 +102,11 @@ class _EditProfile extends State<EditProfile> {
       }
       _profileImageBak = (prefs.getString('profileImage') ?? null);
       _profileName = (prefs.getString('profileName') ?? 'Name');
+      _profileAge = (prefs.getInt('profileAge') ?? 0);
+      dropdownValueJob = (prefs.getString('profileJob') ?? null);
+      dropdownValueSex = (prefs.getString('profileSex') ?? null);
+      _nameController.text = _profileName;
+      _ageController.text = _profileAge.toString();
     });
   }
 
@@ -79,6 +115,18 @@ class _EditProfile extends State<EditProfile> {
     setState(() {
       prefs.setString('profileImage', _profileImageBak);
     });
+  }
+
+  _resetPush() async {
+    await DBHelper().deleteAllPushRoutine();
+    DBHelper().createPushRoutineData(
+        PushRoutine(idx: 0, routine: "1-2-3-4-5", time: 30));
+  }
+
+  _resetSit() async {
+    await DBHelper().deleteAllSitRoutine();
+    DBHelper().createSitRoutineData(
+        SitRoutine(idx: 0, routine: "1-2-3-4-5", time: 30));
   }
 
   void _showPicker(context) {
@@ -162,8 +210,10 @@ class _EditProfile extends State<EditProfile> {
         actions: [
           IconButton(
               onPressed: () {
-                _saveValue();
-                Navigator.pop(context);
+                if (_check()) {
+                  _saveValue();
+                  Navigator.pop(context);
+                }
               },
               icon: Icon(Icons.check, color: Colors.white)),
         ],
@@ -246,6 +296,217 @@ class _EditProfile extends State<EditProfile> {
                         _profileName = value;
                       });
                     }),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 8.0),
+                  child: TextField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                    ],
+                    controller: _ageController,
+                    decoration: InputDecoration(
+                      hintText: '20',
+                      hintStyle: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontFamily: 'MainFont',
+                        fontSize: 18,
+                      ),
+                      labelText: '나이',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'MainFont',
+                        fontSize: 24,
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'MainFont',
+                      fontSize: 18,
+                    ),
+                    cursorColor: Colors.white,
+                    onChanged: ((value) {
+                      setState(() {});
+                    }),
+                  ),
+                ),
+                SizedBox(
+                  height: _sizeHeight * 0.045,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '성별:',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'MainFont',
+                              fontSize: 24,
+                            ),
+                          ),
+                          DropdownButton<String>(
+                            value: dropdownValueSex,
+                            underline: Container(
+                              height: 1,
+                              color: Colors.white,
+                            ),
+                            dropdownColor: Color(0xff191C2B),
+                            icon: Icon(Icons.keyboard_arrow_down,
+                                color: Colors.white),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'MainFont',
+                              fontSize: 24,
+                            ),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                dropdownValueSex = newValue;
+                              });
+                            },
+                            items: <String>['남자', '여자']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '직업:',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'MainFont',
+                              fontSize: 24,
+                            ),
+                          ),
+                          DropdownButton<String>(
+                            value: dropdownValueJob,
+                            underline: Container(
+                              height: 1,
+                              color: Colors.white,
+                            ),
+                            dropdownColor: Color(0xff191C2B),
+                            icon: Icon(Icons.keyboard_arrow_down,
+                                color: Colors.white),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'MainFont',
+                              fontSize: 24,
+                            ),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                dropdownValueJob = newValue;
+                              });
+                            },
+                            items: <String>['군인', '군무원', '민간인']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: _sizeHeight * 0.045,
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 8.0),
+                      child: Text(
+                        'Reset Routine',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'MainFont',
+                          fontSize: 24,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 8.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.white)),
+                            onPressed: () {
+                              _resetPush();
+                            },
+                            color: Colors.white.withOpacity(0),
+                            child: Center(
+                              child: Text(
+                                "Push-Up",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'MainFont',
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.white)),
+                            onPressed: () {
+                              _resetSit();
+                            },
+                            color: Colors.white.withOpacity(0),
+                            child: Center(
+                              child: Text(
+                                "Sit-Up",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'MainFont',
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 10,
+                      ),
+                    ],
                   ),
                 ),
               ],

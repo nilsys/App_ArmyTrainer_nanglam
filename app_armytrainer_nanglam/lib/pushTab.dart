@@ -15,33 +15,29 @@ class PushTab extends StatefulWidget {
 class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+  bool notToday = false;
+  String _setRoutine;
+  int _setTime;
+  bool _setEnd = false;
   double _sizeWidth;
+  String _pushDate = '';
   int _pushRecord = 0;
   int _pushTotal = 0;
-  int _pushLevel = 0;
   int _pushToday = 0;
   int _idx;
-  String exception;
-  PushRoutine _routine = PushRoutine(idx: 0, routine: '', time: 0);
-  String _pushDate = '';
   var _now = new DateTime.now();
   var _formatter = new DateFormat('yyyy-MM-dd');
 
   Future<PushRoutine> _loadRoutine() async {
-    List list = await _fetchList();
-    if (list.length > 0) {
-      for (var i = 0; i < list.length; i++) {
-        if (list[i].idx == _idx) {
-          return await DBHelper().getPushRoutine(_idx);
-        }
+    PushRoutine routine;
+    List<PushRoutine> list = await DBHelper().getAllPushRoutine();
+    routine = await DBHelper().getPushRoutine(list[0].idx);
+    await Future.forEach(list, (element) async {
+      if (element.idx == _idx) {
+        routine = await DBHelper().getPushRoutine(_idx);
       }
-      _idx = list[0].idx;
-      return await DBHelper().getPushRoutine(_idx);
-    }
-  }
-
-  Future<List> _fetchList() {
-    return DBHelper().getAllPushRoutine();
+    });
+    return routine;
   }
 
   _loadValue() async {
@@ -51,18 +47,19 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
         String formattedDate = _formatter.format(_now);
         _pushRecord = (prefs.getInt('pushRecord') ?? 0);
         _pushTotal = (prefs.getInt('pushTotal') ?? 0);
-        _pushLevel = (prefs.getInt('pushLevel') ?? 0);
         _idx = (prefs.getInt('pushIdx') ?? 0);
         _pushDate = formattedDate;
         if (_pushDate != (prefs.getString('pushDate') ?? '')) {
-          print(_pushToday);
+          notToday = true;
           prefs.setString('pushDate', _pushDate);
           prefs.setInt('pushToday', 0);
-          DBHelper().createPushData(
-              Push(date: _pushDate, countRecord: 0, countLevel: 0));
         }
         _pushToday = (prefs.getInt('pushToday') ?? 0);
       });
+    if (notToday) {
+      DBHelper()
+          .createPushData(Push(date: _pushDate, countRecord: 0, countLevel: 0));
+    }
   }
 
   @override
@@ -75,8 +72,8 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     _sizeWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xff191C2B),
       appBar: null,
       body: Column(
@@ -146,6 +143,7 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
                 child: FutureBuilder(
                   future: _loadRoutine(),
                   builder: (context, AsyncSnapshot<PushRoutine> snapshot) {
+                    _setEnd = false;
                     if (snapshot.hasData == false) {
                       return CircularProgressIndicator();
                     } else if (snapshot.hasError) {
@@ -158,6 +156,9 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
                             fontFamily: 'MainFont'),
                       ));
                     } else {
+                      _setRoutine = snapshot.data.routine;
+                      _setTime = snapshot.data.time;
+                      _setEnd = true;
                       return Center(
                           child: Text(
                         snapshot.data.routine,
@@ -183,7 +184,9 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
                   FlatButton(
                     height: 50,
                     onPressed: () {
-                      moveToPushUp();
+                      if (_setEnd) {
+                        moveToPushUp();
+                      }
                     },
                     child: Text(
                       '운동 시작',
@@ -254,33 +257,37 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
     if (idx != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
-        prefs.setInt('pushIdx', idx);
+        prefs.setInt('pushIdx', _idx);
       });
-      _routine = await DBHelper().getPushRoutine(_idx);
     }
   }
 
   void moveToPushUp() async {
-    if (_routine != null) {
-      final count = await Navigator.push(
-        this.context,
-        CupertinoPageRoute(
-          builder: (context) => PushUpScreen(),
-          settings: RouteSettings(arguments: _routine),
-        ),
-      );
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      setState(() {
-        _pushToday = (prefs.getInt('pushToday') ?? 0);
-        _pushToday += count;
-        prefs.setInt('pushToday', _pushToday);
-        _pushTotal = (prefs.getInt('pushTotal') ?? 0);
-        _pushTotal += count;
-        prefs.setInt('pushTotal', _pushTotal);
-      });
-      Push _res = await DBHelper().getPush(_pushDate);
+    final count = await Navigator.push(
+      this.context,
+      CupertinoPageRoute(
+        builder: (context) => PushUpScreen(),
+        settings: RouteSettings(
+            arguments:
+                PushRoutine(idx: 0, routine: _setRoutine, time: _setTime)),
+      ),
+    );
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _pushToday = (prefs.getInt('pushToday') ?? 0);
+      _pushToday += count;
+      prefs.setInt('pushToday', _pushToday);
+      _pushTotal = (prefs.getInt('pushTotal') ?? 0);
+      _pushTotal += count;
+      prefs.setInt('pushTotal', _pushTotal);
+    });
+    Push _res = await DBHelper().getPush(_pushDate);
+    if (_res != null) {
       _res.countLevel += count;
       DBHelper().updatePush(_res);
+    } else {
+      _res = Push(countLevel: count, countRecord: 0, date: _pushDate);
+      DBHelper().createPushData(_res);
     }
   }
 
@@ -306,9 +313,22 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
       }
     });
     Push _res = await DBHelper().getPush(_pushDate);
-    if ((_list[1] == 0) && (_list[0] > _res.countRecord) && (_res != null)) {
-      _res.countRecord = _list[0];
-      DBHelper().updatePush(_res);
+    if (_res != null) {
+      if ((_list[1] == 0) && (_list[0] > _res.countRecord)) {
+        _res.countRecord = _list[0];
+        DBHelper().updatePush(_res);
+      } else {
+        _res.countLevel += _list[0];
+        DBHelper().updatePush(_res);
+      }
+    } else {
+      if ((_list[1] == 0) && (_list[0] > _res.countRecord)) {
+        _res = Push(countLevel: 0, countRecord: _list[0], date: _pushDate);
+        DBHelper().createPushData(_res);
+      } else {
+        _res = Push(countLevel: _list[0], countRecord: 0, date: _pushDate);
+        DBHelper().createPushData(_res);
+      }
     }
   }
 }
@@ -438,7 +458,7 @@ class _PushUpScreen extends State<PushUpScreen> {
                     Positioned(
                       child: Container(
                         height: 3,
-                        width: 90,
+                        width: 50,
                         color: Color(0xffE32A51),
                       ),
                       right: 25,

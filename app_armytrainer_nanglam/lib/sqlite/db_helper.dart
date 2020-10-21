@@ -90,7 +90,7 @@ class DBHelper {
             date: res.first['date'],
             countRecord: res.first['countRecord'],
             countLevel: res.first['countLevel'])
-        : Null;
+        : null;
   }
 
   getSit(String date) async {
@@ -101,7 +101,7 @@ class DBHelper {
             date: res.first['date'],
             countRecord: res.first['countRecord'],
             countLevel: res.first['countLevel'])
-        : Null;
+        : null;
   }
 
   getPushRoutine(int idx) async {
@@ -113,7 +113,7 @@ class DBHelper {
             idx: res.first['idx'],
             routine: res.first['routine'],
             time: res.first['time'])
-        : Null;
+        : null;
   }
 
   getSitRoutine(int idx) async {
@@ -125,7 +125,7 @@ class DBHelper {
             idx: res.first['idx'],
             routine: res.first['routine'],
             time: res.first['time'])
-        : Null;
+        : null;
   }
 
   //Read All
@@ -209,5 +209,16 @@ class DBHelper {
     final db = await database;
     var res = db.rawDelete('DELETE FROM sitroutine WHERE idx = ?', [idx]);
     return res;
+  }
+
+  //Delete All
+  deleteAllPushRoutine() async {
+    final db = await database;
+    db.rawDelete('DELETE FROM pushroutine');
+  }
+
+  deleteAllSitRoutine() async {
+    final db = await database;
+    db.rawDelete('DELETE FROM sitroutine');
   }
 }

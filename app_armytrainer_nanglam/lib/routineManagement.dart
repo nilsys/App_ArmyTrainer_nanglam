@@ -24,20 +24,6 @@ class _RoutineManagement extends State<RoutineManagement> {
     });
   }
 
-  _savePushValue(int indexPush) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      prefs.setInt('indexPush', indexPush);
-    });
-  }
-
-  _saveSitValue(int indexSit) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      prefs.setInt('indexSit', indexSit);
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -137,7 +123,6 @@ class _RoutineManagement extends State<RoutineManagement> {
                     itemBuilder: (BuildContext context, int index) {
                       PushRoutine item = snapshot.data[index];
                       _indexPush = item.idx;
-                      _savePushValue(_indexPush);
                       return Dismissible(
                         key: UniqueKey(),
                         onDismissed: (direction) {
@@ -268,7 +253,6 @@ class _RoutineManagement extends State<RoutineManagement> {
                     itemBuilder: (BuildContext context, int index) {
                       SitRoutine item = snapshot.data[index];
                       _indexSit = item.idx;
-                      _saveSitValue(_indexSit);
                       return Dismissible(
                         key: UniqueKey(),
                         onDismissed: (direction) {
@@ -341,39 +325,27 @@ class _RoutineManagement extends State<RoutineManagement> {
   }
 
   void dialogPushScreen() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _indexPush = (prefs.getInt('indexPush') ?? 0);
-    });
     await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (_) {
-          return PushEDialog(_indexPush);
+          return PushEDialog();
         });
   }
 
   void dialogSitScreen() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _indexSit = (prefs.getInt('indexSit') ?? 0);
-    });
     await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (_) {
-          return SitEDialog(_indexSit);
+          return SitEDialog();
         });
   }
 }
 
 class PushEDialog extends StatefulWidget {
-  int _index;
-  PushEDialog(int index) {
-    this._index = index;
-  }
   @override
-  _PushEDialog createState() => new _PushEDialog(_index);
+  _PushEDialog createState() => new _PushEDialog();
 }
 
 class _PushEDialog extends State<PushEDialog> {
@@ -382,10 +354,6 @@ class _PushEDialog extends State<PushEDialog> {
   String _saveRoutine;
   bool _check = false;
   int _index;
-
-  _PushEDialog(int index) {
-    this._index = index;
-  }
 
   @override
   void dispose() {
@@ -426,9 +394,22 @@ class _PushEDialog extends State<PushEDialog> {
     }
   }
 
+  Future<int> _loadIndex() async {
+    List<PushRoutine> list = await DBHelper().getAllPushRoutine();
+    _index = 0;
+    await Future.forEach(list, (element) {
+      print(element.idx);
+      if (_index == element.idx) {
+        _index++;
+      }
+    });
+    return _index;
+  }
+
   _saveValue() async {
+    _index = await _loadIndex();
     PushRoutine pushRoutine = new PushRoutine(
-        idx: _index + 1,
+        idx: _index,
         routine: _saveRoutine,
         time: int.parse(_timeController.text));
     DBHelper().createPushRoutineData(pushRoutine);
@@ -550,12 +531,8 @@ class _PushEDialog extends State<PushEDialog> {
 }
 
 class SitEDialog extends StatefulWidget {
-  int _index;
-  SitEDialog(int index) {
-    this._index = index;
-  }
   @override
-  _SitEDialog createState() => new _SitEDialog(_index);
+  _SitEDialog createState() => new _SitEDialog();
 }
 
 class _SitEDialog extends State<SitEDialog> {
@@ -564,10 +541,6 @@ class _SitEDialog extends State<SitEDialog> {
   String _saveRoutine;
   bool _check = false;
   int _index;
-
-  _SitEDialog(int index) {
-    this._index = index;
-  }
 
   @override
   void dispose() {
@@ -608,11 +581,22 @@ class _SitEDialog extends State<SitEDialog> {
     }
   }
 
+  Future<int> _loadIndex() async {
+    List<SitRoutine> list = await DBHelper().getAllSitRoutine();
+    _index = 0;
+    await Future.forEach(list, (element) {
+      print(element.idx);
+      if (_index == element.idx) {
+        _index++;
+      }
+    });
+    return _index;
+  }
+
   _saveValue() async {
+    _index = await _loadIndex();
     SitRoutine sitRoutine = new SitRoutine(
-        idx: _index + 1,
-        routine: _saveRoutine,
-        time: int.parse(_timeController.text));
+        routine: _saveRoutine, time: int.parse(_timeController.text));
     DBHelper().createSitRoutineData(sitRoutine);
   }
 
@@ -622,7 +606,7 @@ class _SitEDialog extends State<SitEDialog> {
       child: AlertDialog(
         backgroundColor: Color(0xff191C2B),
         title: Text(
-          'Add Routine (Push)',
+          'Add Routine (Sit)',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'MainFont',
