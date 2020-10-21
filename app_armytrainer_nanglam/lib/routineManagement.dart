@@ -371,7 +371,7 @@ class _PushEDialog extends State<PushEDialog> {
           if (int.parse(element) == 0) {
             return;
           } else {
-            _saveRoutine += element.toString();
+            _saveRoutine += int.parse(element).toString();
             _saveRoutine += '-';
           }
         }
@@ -398,7 +398,6 @@ class _PushEDialog extends State<PushEDialog> {
     List<PushRoutine> list = await DBHelper().getAllPushRoutine();
     _index = 0;
     await Future.forEach(list, (element) {
-      print(element.idx);
       if (_index == element.idx) {
         _index++;
       }
@@ -558,7 +557,7 @@ class _SitEDialog extends State<SitEDialog> {
           if (int.parse(element) == 0) {
             return;
           } else {
-            _saveRoutine += element.toString();
+            _saveRoutine += int.parse(element).toString();
             _saveRoutine += '-';
           }
         }
@@ -585,7 +584,6 @@ class _SitEDialog extends State<SitEDialog> {
     List<SitRoutine> list = await DBHelper().getAllSitRoutine();
     _index = 0;
     await Future.forEach(list, (element) {
-      print(element.idx);
       if (_index == element.idx) {
         _index++;
       }

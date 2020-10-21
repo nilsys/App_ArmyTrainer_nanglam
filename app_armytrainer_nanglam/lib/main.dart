@@ -26,6 +26,7 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
   double _sizeWidth;
   double _deviceRatio;
   double _paddingTop;
+  bool key;
 
   List<Widget> list = [
     Tab(
@@ -50,23 +51,20 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
 
   _loadValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() async {
-      bool key = (prefs.getBool('key') ?? false);
-      if (key != true) {
-        await dialogScreen();
-        DBHelper().createPushRoutineData(
-            PushRoutine(idx: 0, routine: "1-2-3-4-5", time: 30));
-        DBHelper().createSitRoutineData(
-            SitRoutine(idx: 0, routine: "1-2-3-4-5", time: 30));
-      }
-      prefs.setBool('key', true);
-    });
+    await prefs.setBool('key', true);
+    if (await DBHelper().getPushRoutine(0) == null &&
+        await DBHelper().getSitRoutine(0) == null) {
+      DBHelper().createPushRoutineData(
+          PushRoutine(idx: 0, routine: "1-2-3-4-5", time: 30));
+      DBHelper().createSitRoutineData(
+          SitRoutine(idx: 0, routine: "1-2-3-4-5", time: 30));
+    }
+    dialogScreen();
   }
 
   @override
   void initState() {
     _tabController = TabController(vsync: this, length: list.length);
-    _loadValue();
     super.initState();
   }
 
@@ -87,66 +85,85 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xff191C2B),
       appBar: null,
-      body: SizedBox(
-        height: _sizeHeight * _deviceRatio,
-        width: _sizeWidth * _deviceRatio,
-        child: Column(children: [
-          SizedBox(height: _paddingTop + 5),
-          Row(
-            children: [
-              SizedBox(
-                width: 40,
-                height: 48,
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.bar_chart,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProfileApp(),
-                      ));
-                },
-              ),
-              Expanded(
-                flex: 1,
-                child: SizedBox(height: 48),
-              ),
-              SizedBox(
-                width: 235,
-                height: 35,
-                child: TabBar(
-                  tabs: list,
-                  controller: _tabController,
-                  indicator: UnderlineTabIndicator(
-                    borderSide: BorderSide(width: 4, color: Color(0xffE32A51)),
-                    insets: EdgeInsets.symmetric(horizontal: 35.0),
+      body: FutureBuilder<SharedPreferences>(
+          future: SharedPreferences.getInstance(),
+          builder: (BuildContext context,
+              AsyncSnapshot<SharedPreferences> snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data.getBool('key') != null) {
+                return Center(
+                  child: SizedBox(
+                    height: _sizeHeight * _deviceRatio,
+                    width: _sizeWidth * _deviceRatio,
+                    child: Column(children: [
+                      SizedBox(height: _paddingTop + 5),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 40,
+                            height: 48,
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.bar_chart,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileApp(),
+                                  ));
+                            },
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(height: 48),
+                          ),
+                          SizedBox(
+                            width: 235,
+                            height: 35,
+                            child: TabBar(
+                              tabs: list,
+                              controller: _tabController,
+                              indicator: UnderlineTabIndicator(
+                                borderSide: BorderSide(
+                                    width: 4, color: Color(0xffE32A51)),
+                                insets: EdgeInsets.symmetric(horizontal: 35.0),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                            height: 48,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: _sizeHeight * 0.045),
+                      SizedBox(
+                        width: _sizeWidth * _deviceRatio,
+                        height: _sizeHeight * 0.819,
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            PushTab(),
+                            SitTab(),
+                          ],
+                        ),
+                      ),
+                    ]),
                   ),
-                ),
-              ),
-              SizedBox(
-                width: 10,
-                height: 48,
-              ),
-            ],
-          ),
-          SizedBox(height: _sizeHeight * 0.045),
-          SizedBox(
-            width: _sizeWidth * _deviceRatio,
-            height: _sizeHeight * 0.819,
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                PushTab(),
-                SitTab(),
-              ],
-            ),
-          ),
-        ]),
-      ),
+                );
+              } else {
+                _loadValue();
+                return Center(
+                  child: Text(''),
+                );
+              }
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          }),
     );
   }
 
@@ -194,7 +211,7 @@ class _EDialog extends State<EDialog> {
   _saveValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('profileName', _nameController.text);
-    prefs.setString('profileAge', _ageController.text);
+    prefs.setInt('profileAge', int.parse(_ageController.text));
     prefs.setString('profileJob', dropdownValueJob);
     prefs.setString('profileSex', dropdownValueSex);
   }

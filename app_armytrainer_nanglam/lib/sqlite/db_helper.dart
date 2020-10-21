@@ -97,7 +97,7 @@ class DBHelper {
     final db = await database;
     var res = await db.rawQuery('SELECT * FROM sit WHERE date = ?', [date]);
     return res.isNotEmpty
-        ? Push(
+        ? Sit(
             date: res.first['date'],
             countRecord: res.first['countRecord'],
             countLevel: res.first['countLevel'])
@@ -121,7 +121,7 @@ class DBHelper {
     var res =
         await db.rawQuery('SELECT * FROM sitroutine WHERE idx = ?', [idx]);
     return res.isNotEmpty
-        ? PushRoutine(
+        ? SitRoutine(
             idx: res.first['idx'],
             routine: res.first['routine'],
             time: res.first['time'])
@@ -143,12 +143,12 @@ class DBHelper {
     return list;
   }
 
-  Future<List<Push>> getAllSit() async {
+  Future<List<Sit>> getAllSit() async {
     final db = await database;
     var res = await db.rawQuery('SELECT * FROM sit');
-    List<Push> list = res.isNotEmpty
+    List<Sit> list = res.isNotEmpty
         ? res
-            .map((c) => Push(
+            .map((c) => Sit(
                 date: c['date'],
                 countRecord: c['countRecord'],
                 countLevel: c['countLevel']))

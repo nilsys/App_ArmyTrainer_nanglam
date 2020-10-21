@@ -28,7 +28,7 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
   var _now = new DateTime.now();
   var _formatter = new DateFormat('yyyy-MM-dd');
 
-  Future<PushRoutine> _loadRoutine() async {
+  Future<PushRoutine> _loadPushRoutine() async {
     PushRoutine routine;
     List<PushRoutine> list = await DBHelper().getAllPushRoutine();
     routine = await DBHelper().getPushRoutine(list[0].idx);
@@ -40,7 +40,7 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
     return routine;
   }
 
-  _loadValue() async {
+  _loadPushValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (mounted)
       setState(() {
@@ -65,8 +65,8 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    _loadValue();
-    _loadRoutine();
+    _loadPushValue();
+    _loadPushRoutine();
   }
 
   @override
@@ -141,7 +141,7 @@ class _PushTab extends State<PushTab> with AutomaticKeepAliveClientMixin {
                   setState(() {});
                 },
                 child: FutureBuilder(
-                  future: _loadRoutine(),
+                  future: _loadPushRoutine(),
                   builder: (context, AsyncSnapshot<PushRoutine> snapshot) {
                     _setEnd = false;
                     if (snapshot.hasData == false) {

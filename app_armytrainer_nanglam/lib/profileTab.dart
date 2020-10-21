@@ -76,8 +76,8 @@ class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
       _pushrecord = (prefs.getInt('pushRecord') ?? 0);
       _sitrecord = (prefs.getInt('sitRecord') ?? 0);
       _profileAge = (prefs.getInt('profileAge') ?? 0);
-      _profileSex = (prefs.getString('profileSex') ?? '');
-      _profileJob = (prefs.getString('profileJob') ?? '');
+      _profileSex = (prefs.getString('profileSex') ?? '남자');
+      _profileJob = (prefs.getString('profileJob') ?? '군인');
     });
   }
 
@@ -187,15 +187,26 @@ class _ProfileApp extends State<ProfileApp> with TickerProviderStateMixin {
                             ),
                           ),
                           Expanded(
-                            child: Center(
-                              child: Text(
-                                '415',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'MainFont',
-                                  fontSize: 32,
-                                ),
-                              ),
+                            child: FutureBuilder(
+                              future: _loadSitLevel(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<String> snapshot) {
+                                if (snapshot.hasData) {
+                                  return Center(
+                                    child: Text(
+                                      snapshot.data,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'MainFont',
+                                        fontSize: 32,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
+                              },
                             ),
                           ),
                         ],
