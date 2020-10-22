@@ -530,7 +530,7 @@ class PushUpScreenR extends StatefulWidget {
 
 class _PushUpScreenR extends State<PushUpScreenR> {
   Timer _timer;
-  int _time = 5;
+  int _time = 120;
   double _paddingTop;
   double _sizeHeight;
   double _sizeWidth;

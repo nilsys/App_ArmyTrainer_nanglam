@@ -515,7 +515,7 @@ class SitUpScreenR extends StatefulWidget {
 
 class _SitUpScreenR extends State<SitUpScreenR> {
   Timer _timer;
-  int _time = 5;
+  int _time = 120;
   double _paddingTop;
   double _sizeHeight;
   double _sizeWidth;
