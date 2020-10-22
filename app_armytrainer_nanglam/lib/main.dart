@@ -190,8 +190,6 @@ class _EDialog extends State<EDialog> {
   final _ageController = TextEditingController();
   String _saveRoutine;
   bool _check = false;
-  int _index;
-
   @override
   void dispose() {
     _nameController.dispose();

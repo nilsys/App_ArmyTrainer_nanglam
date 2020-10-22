@@ -1,3 +1,4 @@
+import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:app_armytrainer_nanglam/sqlite/db_helper.dart';
@@ -391,6 +392,8 @@ class _PushUpScreen extends State<PushUpScreen> {
         if (_state) {
           _proximityValues = event.getValue();
           if (_proximityValues && !_touch) {
+            final player = AudioCache();
+            player.play('cursor.mp3');
             _routine[_idx]--;
             _sumcount++;
             if (_routine[_idx] == 0) {
@@ -477,6 +480,8 @@ class _PushUpScreen extends State<PushUpScreen> {
                     if ((_idx == _routine.length - 1) && _touch) {
                       Navigator.pop(context, _sumcount);
                     } else if (_proximityValues == false) {
+                      final player = AudioCache();
+                      player.play('cursor.mp3');
                       _routine[_idx]--;
                       _sumcount++;
                       if (_routine[_idx] == 0) {
@@ -536,9 +541,23 @@ class _PushUpScreenR extends State<PushUpScreenR> {
   double _sizeWidth;
   int _count = 0;
   bool _proximityValues = false;
+  String _profileJob;
+  String _profileSex;
+  int _profileAge;
+  int _pushrecord;
   List<StreamSubscription<dynamic>> _streamSubscriptions =
       <StreamSubscription<dynamic>>[];
   String _text = "";
+  String _levelText = "";
+
+  _loadValue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _profileAge = (prefs.getInt('profileAge') ?? 0);
+      _profileJob = (prefs.getString('profileJob') ?? "군인");
+      _profileSex = (prefs.getString('profileSex') ?? "남자");
+    });
+  }
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -553,6 +572,8 @@ class _PushUpScreenR extends State<PushUpScreenR> {
                 in _streamSubscriptions) {
               subscription.cancel();
             }
+            _pushrecord = _count;
+            _levelText = _loadPushLevel();
           } else {
             _time--;
           }
@@ -575,6 +596,7 @@ class _PushUpScreenR extends State<PushUpScreenR> {
   @override
   void initState() {
     super.initState();
+    _loadValue();
     _streamSubscriptions.add(proximityEvents.listen((ProximityEvent event) {
       setState(() {
         _proximityValues = event.getValue();
@@ -582,6 +604,9 @@ class _PushUpScreenR extends State<PushUpScreenR> {
           if (_count == 0) {
             startTimer();
           }
+
+          final player = AudioCache();
+          player.play('cursor.mp3');
           _count++;
         }
       });
@@ -649,6 +674,8 @@ class _PushUpScreenR extends State<PushUpScreenR> {
                   }
                   setState(() {
                     if (_proximityValues == false && _time > 0) {
+                      final player = AudioCache();
+                      player.play('cursor.mp3');
                       _count++;
                     }
                   });
@@ -665,13 +692,21 @@ class _PushUpScreenR extends State<PushUpScreenR> {
                         ),
                       ),
                       Text(
+                        '$_levelText',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'MainFont',
+                          fontSize: 32,
+                        ),
+                      ),
+                      Text(
                         '$_text',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'MainFont',
                           fontSize: 32,
                         ),
-                      )
+                      ),
                     ]),
               ),
             ),
@@ -680,6 +715,963 @@ class _PushUpScreenR extends State<PushUpScreenR> {
         onWillPop: () {},
       ),
     );
+  }
+
+  String _loadPushLevel() {
+    if (_profileSex == '남자') {
+      if (_profileJob == '군인') {
+        if (_profileAge <= 25) {
+          if (_pushrecord <= 47) {
+            return "불합격";
+          } else if (_pushrecord <= 55) {
+            return "3급";
+          } else if (_pushrecord <= 63) {
+            return "2급";
+          } else if (_pushrecord <= 71) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 30) {
+          if (_pushrecord <= 45) {
+            return "불합격";
+          } else if (_pushrecord <= 53) {
+            return "3급";
+          } else if (_pushrecord <= 61) {
+            return "2급";
+          } else if (_pushrecord <= 67) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 35) {
+          if (_pushrecord <= 43) {
+            return "불합격";
+          } else if (_pushrecord <= 51) {
+            return "3급";
+          } else if (_pushrecord <= 59) {
+            return "2급";
+          } else if (_pushrecord <= 67) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 40) {
+          if (_pushrecord <= 40) {
+            return "불합격";
+          } else if (_pushrecord <= 48) {
+            return "3급";
+          } else if (_pushrecord <= 56) {
+            return "2급";
+          } else if (_pushrecord <= 67) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 43) {
+          if (_pushrecord <= 36) {
+            return "불합격";
+          } else if (_pushrecord <= 44) {
+            return "3급";
+          } else if (_pushrecord <= 52) {
+            return "2급";
+          } else if (_pushrecord <= 60) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 46) {
+          if (_pushrecord <= 32) {
+            return "불합격";
+          } else if (_pushrecord <= 40) {
+            return "3급";
+          } else if (_pushrecord <= 48) {
+            return "2급";
+          } else if (_pushrecord <= 56) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 49) {
+          if (_pushrecord <= 29) {
+            return "불합격";
+          } else if (_pushrecord <= 34) {
+            return "3급";
+          } else if (_pushrecord <= 42) {
+            return "2급";
+          } else if (_pushrecord <= 50) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 51) {
+          if (_pushrecord <= 26) {
+            return "불합격";
+          } else if (_pushrecord <= 34) {
+            return "3급";
+          } else if (_pushrecord <= 45) {
+            return "2급";
+          } else if (_pushrecord <= 50) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 53) {
+          if (_pushrecord <= 24) {
+            return "불합격";
+          } else if (_pushrecord <= 32) {
+            return "3급";
+          } else if (_pushrecord <= 40) {
+            return "2급";
+          } else if (_pushrecord <= 48) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 55) {
+          if (_pushrecord <= 22) {
+            return "불합격";
+          } else if (_pushrecord <= 30) {
+            return "3급";
+          } else if (_pushrecord <= 38) {
+            return "2급";
+          } else if (_pushrecord <= 46) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 57) {
+          if (_pushrecord <= 19) {
+            return "불합격";
+          } else if (_pushrecord <= 27) {
+            return "3급";
+          } else if (_pushrecord <= 35) {
+            return "2급";
+          } else if (_pushrecord <= 43) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 59) {
+          if (_pushrecord <= 17) {
+            return "불합격";
+          } else if (_pushrecord <= 25) {
+            return "3급";
+          } else if (_pushrecord <= 33) {
+            return "2급";
+          } else if (_pushrecord <= 41) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else {
+          if (_pushrecord <= 15) {
+            return "불합격";
+          } else if (_pushrecord <= 23) {
+            return "3급";
+          } else if (_pushrecord <= 31) {
+            return "2급";
+          } else if (_pushrecord <= 39) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        }
+      } else if (_profileJob == '군무원') {
+        if (_profileAge <= 25) {
+          if (_pushrecord <= 42) {
+            return "불합격";
+          } else if (_pushrecord <= 49) {
+            return "3급";
+          } else if (_pushrecord <= 57) {
+            return "2급";
+          } else if (_pushrecord <= 64) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 30) {
+          if (_pushrecord <= 41) {
+            return "불합격";
+          } else if (_pushrecord <= 48) {
+            return "3급";
+          } else if (_pushrecord <= 55) {
+            return "2급";
+          } else if (_pushrecord <= 62) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 35) {
+          if (_pushrecord <= 39) {
+            return "불합격";
+          } else if (_pushrecord <= 46) {
+            return "3급";
+          } else if (_pushrecord <= 53) {
+            return "2급";
+          } else if (_pushrecord <= 60) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 40) {
+          if (_pushrecord <= 36) {
+            return "불합격";
+          } else if (_pushrecord <= 43) {
+            return "3급";
+          } else if (_pushrecord <= 50) {
+            return "2급";
+          } else if (_pushrecord <= 58) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 43) {
+          if (_pushrecord <= 32) {
+            return "불합격";
+          } else if (_pushrecord <= 40) {
+            return "3급";
+          } else if (_pushrecord <= 47) {
+            return "2급";
+          } else if (_pushrecord <= 54) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 46) {
+          if (_pushrecord <= 29) {
+            return "불합격";
+          } else if (_pushrecord <= 36) {
+            return "3급";
+          } else if (_pushrecord <= 43) {
+            return "2급";
+          } else if (_pushrecord <= 50) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 49) {
+          if (_pushrecord <= 26) {
+            return "불합격";
+          } else if (_pushrecord <= 33) {
+            return "3급";
+          } else if (_pushrecord <= 40) {
+            return "2급";
+          } else if (_pushrecord <= 48) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 51) {
+          if (_pushrecord <= 23) {
+            return "불합격";
+          } else if (_pushrecord <= 31) {
+            return "3급";
+          } else if (_pushrecord <= 38) {
+            return "2급";
+          } else if (_pushrecord <= 45) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 53) {
+          if (_pushrecord <= 22) {
+            return "불합격";
+          } else if (_pushrecord <= 29) {
+            return "3급";
+          } else if (_pushrecord <= 36) {
+            return "2급";
+          } else if (_pushrecord <= 43) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 55) {
+          if (_pushrecord <= 20) {
+            return "불합격";
+          } else if (_pushrecord <= 27) {
+            return "3급";
+          } else if (_pushrecord <= 34) {
+            return "2급";
+          } else if (_pushrecord <= 41) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 57) {
+          if (_pushrecord <= 18) {
+            return "불합격";
+          } else if (_pushrecord <= 25) {
+            return "3급";
+          } else if (_pushrecord <= 32) {
+            return "2급";
+          } else if (_pushrecord <= 39) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 59) {
+          if (_pushrecord <= 16) {
+            return "불합격";
+          } else if (_pushrecord <= 23) {
+            return "3급";
+          } else if (_pushrecord <= 30) {
+            return "2급";
+          } else if (_pushrecord <= 37) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else {
+          if (_pushrecord <= 14) {
+            return "불합격";
+          } else if (_pushrecord <= 21) {
+            return "3급";
+          } else if (_pushrecord <= 28) {
+            return "2급";
+          } else if (_pushrecord <= 35) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        }
+      } else {
+        if (_profileAge <= 25) {
+          if (_pushrecord <= 42) {
+            return "불합격";
+          } else if (_pushrecord <= 49) {
+            return "3급";
+          } else if (_pushrecord <= 57) {
+            return "2급";
+          } else if (_pushrecord <= 64) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 30) {
+          if (_pushrecord <= 41) {
+            return "불합격";
+          } else if (_pushrecord <= 48) {
+            return "3급";
+          } else if (_pushrecord <= 55) {
+            return "2급";
+          } else if (_pushrecord <= 62) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 35) {
+          if (_pushrecord <= 39) {
+            return "불합격";
+          } else if (_pushrecord <= 46) {
+            return "3급";
+          } else if (_pushrecord <= 53) {
+            return "2급";
+          } else if (_pushrecord <= 60) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 40) {
+          if (_pushrecord <= 36) {
+            return "불합격";
+          } else if (_pushrecord <= 43) {
+            return "3급";
+          } else if (_pushrecord <= 50) {
+            return "2급";
+          } else if (_pushrecord <= 58) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 43) {
+          if (_pushrecord <= 32) {
+            return "불합격";
+          } else if (_pushrecord <= 40) {
+            return "3급";
+          } else if (_pushrecord <= 47) {
+            return "2급";
+          } else if (_pushrecord <= 54) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 46) {
+          if (_pushrecord <= 29) {
+            return "불합격";
+          } else if (_pushrecord <= 36) {
+            return "3급";
+          } else if (_pushrecord <= 43) {
+            return "2급";
+          } else if (_pushrecord <= 50) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 49) {
+          if (_pushrecord <= 26) {
+            return "불합격";
+          } else if (_pushrecord <= 33) {
+            return "3급";
+          } else if (_pushrecord <= 40) {
+            return "2급";
+          } else if (_pushrecord <= 48) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 51) {
+          if (_pushrecord <= 23) {
+            return "불합격";
+          } else if (_pushrecord <= 31) {
+            return "3급";
+          } else if (_pushrecord <= 38) {
+            return "2급";
+          } else if (_pushrecord <= 45) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 53) {
+          if (_pushrecord <= 22) {
+            return "불합격";
+          } else if (_pushrecord <= 29) {
+            return "3급";
+          } else if (_pushrecord <= 36) {
+            return "2급";
+          } else if (_pushrecord <= 43) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 55) {
+          if (_pushrecord <= 20) {
+            return "불합격";
+          } else if (_pushrecord <= 27) {
+            return "3급";
+          } else if (_pushrecord <= 34) {
+            return "2급";
+          } else if (_pushrecord <= 41) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 57) {
+          if (_pushrecord <= 18) {
+            return "불합격";
+          } else if (_pushrecord <= 25) {
+            return "3급";
+          } else if (_pushrecord <= 32) {
+            return "2급";
+          } else if (_pushrecord <= 39) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 59) {
+          if (_pushrecord <= 16) {
+            return "불합격";
+          } else if (_pushrecord <= 23) {
+            return "3급";
+          } else if (_pushrecord <= 30) {
+            return "2급";
+          } else if (_pushrecord <= 37) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else {
+          if (_pushrecord <= 14) {
+            return "불합격";
+          } else if (_pushrecord <= 21) {
+            return "3급";
+          } else if (_pushrecord <= 28) {
+            return "2급";
+          } else if (_pushrecord <= 35) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        }
+      }
+    } else {
+      if (_profileJob == '군인') {
+        if (_profileAge <= 25) {
+          if (_pushrecord <= 22) {
+            return "불합격";
+          } else if (_pushrecord <= 26) {
+            return "3급";
+          } else if (_pushrecord <= 30) {
+            return "2급";
+          } else if (_pushrecord <= 34) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 30) {
+          if (_pushrecord <= 21) {
+            return "불합격";
+          } else if (_pushrecord <= 25) {
+            return "3급";
+          } else if (_pushrecord <= 28) {
+            return "2급";
+          } else if (_pushrecord <= 32) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 35) {
+          if (_pushrecord <= 19) {
+            return "불합격";
+          } else if (_pushrecord <= 22) {
+            return "3급";
+          } else if (_pushrecord <= 26) {
+            return "2급";
+          } else if (_pushrecord <= 30) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 40) {
+          if (_pushrecord <= 17) {
+            return "불합격";
+          } else if (_pushrecord <= 21) {
+            return "3급";
+          } else if (_pushrecord <= 24) {
+            return "2급";
+          } else if (_pushrecord <= 28) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 43) {
+          if (_pushrecord <= 15) {
+            return "불합격";
+          } else if (_pushrecord <= 18) {
+            return "3급";
+          } else if (_pushrecord <= 22) {
+            return "2급";
+          } else if (_pushrecord <= 25) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 46) {
+          if (_pushrecord <= 14) {
+            return "불합격";
+          } else if (_pushrecord <= 17) {
+            return "3급";
+          } else if (_pushrecord <= 20) {
+            return "2급";
+          } else if (_pushrecord <= 23) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 49) {
+          if (_pushrecord <= 12) {
+            return "불합격";
+          } else if (_pushrecord <= 15) {
+            return "3급";
+          } else if (_pushrecord <= 18) {
+            return "2급";
+          } else if (_pushrecord <= 21) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 51) {
+          if (_pushrecord <= 10) {
+            return "불합격";
+          } else if (_pushrecord <= 13) {
+            return "3급";
+          } else if (_pushrecord <= 16) {
+            return "2급";
+          } else if (_pushrecord <= 18) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 53) {
+          if (_pushrecord <= 8) {
+            return "불합격";
+          } else if (_pushrecord <= 11) {
+            return "3급";
+          } else if (_pushrecord <= 13) {
+            return "2급";
+          } else if (_pushrecord <= 16) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 55) {
+          if (_pushrecord <= 7) {
+            return "불합격";
+          } else if (_pushrecord <= 9) {
+            return "3급";
+          } else if (_pushrecord <= 12) {
+            return "2급";
+          } else if (_pushrecord <= 14) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 57) {
+          if (_pushrecord <= 6) {
+            return "불합격";
+          } else if (_pushrecord <= 8) {
+            return "3급";
+          } else if (_pushrecord <= 10) {
+            return "2급";
+          } else if (_pushrecord <= 12) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 59) {
+          if (_pushrecord <= 5) {
+            return "불합격";
+          } else if (_pushrecord <= 7) {
+            return "3급";
+          } else if (_pushrecord <= 9) {
+            return "2급";
+          } else if (_pushrecord <= 11) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else {
+          if (_pushrecord <= 4) {
+            return "불합격";
+          } else if (_pushrecord <= 6) {
+            return "3급";
+          } else if (_pushrecord <= 8) {
+            return "2급";
+          } else if (_pushrecord <= 10) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        }
+      } else if (_profileJob == '군무원') {
+        if (_profileAge <= 25) {
+          if (_pushrecord <= 20) {
+            return "불합격";
+          } else if (_pushrecord <= 23) {
+            return "3급";
+          } else if (_pushrecord <= 27) {
+            return "2급";
+          } else if (_pushrecord <= 31) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 30) {
+          if (_pushrecord <= 19) {
+            return "불합격";
+          } else if (_pushrecord <= 22) {
+            return "3급";
+          } else if (_pushrecord <= 25) {
+            return "2급";
+          } else if (_pushrecord <= 29) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 35) {
+          if (_pushrecord <= 17) {
+            return "불합격";
+          } else if (_pushrecord <= 20) {
+            return "3급";
+          } else if (_pushrecord <= 23) {
+            return "2급";
+          } else if (_pushrecord <= 27) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 40) {
+          if (_pushrecord <= 15) {
+            return "불합격";
+          } else if (_pushrecord <= 19) {
+            return "3급";
+          } else if (_pushrecord <= 22) {
+            return "2급";
+          } else if (_pushrecord <= 25) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 43) {
+          if (_pushrecord <= 14) {
+            return "불합격";
+          } else if (_pushrecord <= 16) {
+            return "3급";
+          } else if (_pushrecord <= 20) {
+            return "2급";
+          } else if (_pushrecord <= 22) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 46) {
+          if (_pushrecord <= 13) {
+            return "불합격";
+          } else if (_pushrecord <= 15) {
+            return "3급";
+          } else if (_pushrecord <= 18) {
+            return "2급";
+          } else if (_pushrecord <= 21) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 49) {
+          if (_pushrecord <= 11) {
+            return "불합격";
+          } else if (_pushrecord <= 13) {
+            return "3급";
+          } else if (_pushrecord <= 16) {
+            return "2급";
+          } else if (_pushrecord <= 19) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 51) {
+          if (_pushrecord <= 9) {
+            return "불합격";
+          } else if (_pushrecord <= 12) {
+            return "3급";
+          } else if (_pushrecord <= 14) {
+            return "2급";
+          } else if (_pushrecord <= 16) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 53) {
+          if (_pushrecord <= 7) {
+            return "불합격";
+          } else if (_pushrecord <= 10) {
+            return "3급";
+          } else if (_pushrecord <= 12) {
+            return "2급";
+          } else if (_pushrecord <= 14) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 55) {
+          if (_pushrecord <= 6) {
+            return "불합격";
+          } else if (_pushrecord <= 8) {
+            return "3급";
+          } else if (_pushrecord <= 11) {
+            return "2급";
+          } else if (_pushrecord <= 13) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 57) {
+          if (_pushrecord <= 5) {
+            return "불합격";
+          } else if (_pushrecord <= 7) {
+            return "3급";
+          } else if (_pushrecord <= 9) {
+            return "2급";
+          } else if (_pushrecord <= 11) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 59) {
+          if (_pushrecord <= 4) {
+            return "불합격";
+          } else if (_pushrecord <= 6) {
+            return "3급";
+          } else if (_pushrecord <= 8) {
+            return "2급";
+          } else if (_pushrecord <= 10) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else {
+          if (_pushrecord <= 3) {
+            return "불합격";
+          } else if (_pushrecord <= 5) {
+            return "3급";
+          } else if (_pushrecord <= 7) {
+            return "2급";
+          } else if (_pushrecord <= 9) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        }
+      } else {
+        if (_profileAge <= 25) {
+          if (_pushrecord <= 20) {
+            return "불합격";
+          } else if (_pushrecord <= 23) {
+            return "3급";
+          } else if (_pushrecord <= 27) {
+            return "2급";
+          } else if (_pushrecord <= 31) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 30) {
+          if (_pushrecord <= 19) {
+            return "불합격";
+          } else if (_pushrecord <= 22) {
+            return "3급";
+          } else if (_pushrecord <= 25) {
+            return "2급";
+          } else if (_pushrecord <= 29) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 35) {
+          if (_pushrecord <= 17) {
+            return "불합격";
+          } else if (_pushrecord <= 20) {
+            return "3급";
+          } else if (_pushrecord <= 23) {
+            return "2급";
+          } else if (_pushrecord <= 27) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 40) {
+          if (_pushrecord <= 15) {
+            return "불합격";
+          } else if (_pushrecord <= 19) {
+            return "3급";
+          } else if (_pushrecord <= 22) {
+            return "2급";
+          } else if (_pushrecord <= 25) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 43) {
+          if (_pushrecord <= 14) {
+            return "불합격";
+          } else if (_pushrecord <= 16) {
+            return "3급";
+          } else if (_pushrecord <= 20) {
+            return "2급";
+          } else if (_pushrecord <= 22) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 46) {
+          if (_pushrecord <= 13) {
+            return "불합격";
+          } else if (_pushrecord <= 15) {
+            return "3급";
+          } else if (_pushrecord <= 18) {
+            return "2급";
+          } else if (_pushrecord <= 21) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 49) {
+          if (_pushrecord <= 11) {
+            return "불합격";
+          } else if (_pushrecord <= 13) {
+            return "3급";
+          } else if (_pushrecord <= 16) {
+            return "2급";
+          } else if (_pushrecord <= 19) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 51) {
+          if (_pushrecord <= 9) {
+            return "불합격";
+          } else if (_pushrecord <= 12) {
+            return "3급";
+          } else if (_pushrecord <= 14) {
+            return "2급";
+          } else if (_pushrecord <= 16) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 53) {
+          if (_pushrecord <= 7) {
+            return "불합격";
+          } else if (_pushrecord <= 10) {
+            return "3급";
+          } else if (_pushrecord <= 12) {
+            return "2급";
+          } else if (_pushrecord <= 14) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 55) {
+          if (_pushrecord <= 6) {
+            return "불합격";
+          } else if (_pushrecord <= 8) {
+            return "3급";
+          } else if (_pushrecord <= 11) {
+            return "2급";
+          } else if (_pushrecord <= 13) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 57) {
+          if (_pushrecord <= 5) {
+            return "불합격";
+          } else if (_pushrecord <= 7) {
+            return "3급";
+          } else if (_pushrecord <= 9) {
+            return "2급";
+          } else if (_pushrecord <= 11) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else if (_profileAge <= 59) {
+          if (_pushrecord <= 4) {
+            return "불합격";
+          } else if (_pushrecord <= 6) {
+            return "3급";
+          } else if (_pushrecord <= 8) {
+            return "2급";
+          } else if (_pushrecord <= 10) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        } else {
+          if (_pushrecord <= 3) {
+            return "불합격";
+          } else if (_pushrecord <= 5) {
+            return "3급";
+          } else if (_pushrecord <= 7) {
+            return "2급";
+          } else if (_pushrecord <= 9) {
+            return "1급";
+          } else {
+            return "특급";
+          }
+        }
+      }
+    }
+    return null;
   }
 }
 
