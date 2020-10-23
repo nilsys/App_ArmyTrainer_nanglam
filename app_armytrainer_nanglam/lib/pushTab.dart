@@ -1,8 +1,10 @@
+import 'package:app_armytrainer_nanglam/main.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:app_armytrainer_nanglam/sqlite/db_helper.dart';
 import 'package:app_armytrainer_nanglam/sqlite/models/models.dart';
+import 'package:kakao_flutter_sdk/all.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:all_sensors/all_sensors.dart';
 import 'package:intl/intl.dart';
@@ -544,6 +546,7 @@ class _PushUpScreenR extends State<PushUpScreenR> {
   String _profileJob;
   String _profileSex;
   int _profileAge;
+
   int _pushrecord;
   List<StreamSubscription<dynamic>> _streamSubscriptions =
       <StreamSubscription<dynamic>>[];
@@ -593,10 +596,19 @@ class _PushUpScreenR extends State<PushUpScreenR> {
     super.dispose();
   }
 
+  bool _isKakaoTalkInstalled = true;
+  _initKakaoTalkInstalled() async {
+    final installed = await isKakaoTalkInstalled();
+    setState(() {
+      _isKakaoTalkInstalled = installed;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _loadValue();
+    _initKakaoTalkInstalled();
     _streamSubscriptions.add(proximityEvents.listen((ProximityEvent event) {
       setState(() {
         _proximityValues = event.getValue();
@@ -613,8 +625,37 @@ class _PushUpScreenR extends State<PushUpScreenR> {
     }));
   }
 
+  _issueAccessToken(String authCode) async {
+    try {
+      var token = await AuthApi.instance.issueAccessToken(authCode);
+      AccessTokenStore.instance.toStore(token);
+      //Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+    } catch (e) {
+      print("error on issuing access token: $e");
+    }
+  }
+
+  _loginWithKakao() async {
+    try {
+      var code = await AuthCodeClient.instance.request();
+      await _issueAccessToken(code);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  _loginWithTalk() async {
+    try {
+      var code = await AuthCodeClient.instance.requestWithTalk();
+      await _issueAccessToken(code);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    KakaoContext.clientId = "20ad57fbf96854ff342e2b538131ba6c";
     _sizeHeight = MediaQuery.of(context).size.height;
     _sizeWidth = MediaQuery.of(context).size.width;
     _paddingTop = MediaQuery.of(context).padding.top;
@@ -707,6 +748,16 @@ class _PushUpScreenR extends State<PushUpScreenR> {
                           fontSize: 32,
                         ),
                       ),
+                      IconButton(
+                          icon: Icon(Icons.share, color: Colors.white),
+                          onPressed: () {
+                            if (_isKakaoTalkInstalled != null &&
+                                _isKakaoTalkInstalled) {
+                              _loginWithTalk();
+                            } else {
+                              _loginWithKakao();
+                            }
+                          }),
                     ]),
               ),
             ),
