@@ -393,7 +393,7 @@ class _SitUpScreen extends State<SitUpScreen> {
       setState(() {
         if (_state) {
           _gyroscopeValues = <double>[event.x, event.y, event.z];
-          if (_gyroscopeValues[1] < -2.5) {
+          if (_gyroscopeValues[1] < -1.5) {
             if (_gyroState) {
               final player = AudioCache();
               player.play('cursor.mp3');
@@ -411,7 +411,7 @@ class _SitUpScreen extends State<SitUpScreen> {
                 }
               }
             }
-          } else if (_gyroscopeValues[1] > 2.5) {
+          } else if (_gyroscopeValues[1] > 1.5) {
             if (_gyroState) {
               _gyroState = true;
             }
@@ -556,8 +556,8 @@ class _SitUpScreenR extends State<SitUpScreenR> {
                 in _streamSubscriptions) {
               subscription.cancel();
             }
-            _sitrecord = _count;
             _levelText = _loadSitLevel();
+            _sitrecord = _count;
           } else {
             _time--;
           }
@@ -585,7 +585,7 @@ class _SitUpScreenR extends State<SitUpScreenR> {
       setState(() {
         _gyroscopeValues = <double>[event.x, event.y, event.z];
 
-        if (_gyroscopeValues[1] < -2.5) {
+        if (_gyroscopeValues[1] < -1.5) {
           if (_gyroState) {
             if (_count == 0) {
               startTimer();
