@@ -96,6 +96,7 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
                     height: _sizeHeight * _deviceRatio,
                     width: _sizeWidth * _deviceRatio,
                     child: Column(children: [
+                      SizedBox(height: _paddingTop + 25),
                       SizedBox(height: _paddingTop + 5),
                       Row(
                         children: [
