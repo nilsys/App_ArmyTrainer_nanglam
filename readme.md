@@ -1,22 +1,23 @@
-
-[https://github.com/osam2019](https://github.com/osam2019)
-**2019프로젝트, readme.md를 참고하여 개발자님의 새로운 프로젝트를 만들어주세요!**
-
-# Smaple Logo
+![Logo Image](/Images/icon.png)
+#
 
 ## 팀소개 및 프로잭트 설명 동영상
 
 ## App 기초 UI
-<img src="./Image/SampleUI.png" width="187.5" height="406">
+<img src="./Images/SampleUI.png" width="187.5" height="406">
 </br>
+
 ## 기능 설계
 
-## 컴퓨터 구성 / 필수 조건 안내 (Prerequisites)
+## Prerequisites
 
-## 기술 스택 (Technique Used) (예시)
+
+
+## 기술 스택 (Technique Used)
 ### Server(back-end)
- 
+    - sqlite
 ### front-end
+    - flutter
 
 
 ## 설치 안내 (Installation Process)

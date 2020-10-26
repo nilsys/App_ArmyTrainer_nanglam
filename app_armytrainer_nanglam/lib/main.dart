@@ -175,6 +175,18 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
         builder: (_) {
           return EDialog();
         });
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return PUDialog();
+        });
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return SUDialog();
+        });
   }
 }
 
@@ -410,6 +422,78 @@ class _EDialog extends State<EDialog> {
                   _saveValue();
                   Navigator.pop(context);
                 }
+              })
+        ],
+      ),
+      onWillPop: () {
+        setState(() {});
+      },
+    );
+  }
+}
+
+class PUDialog extends StatefulWidget {
+  @override
+  _PUDialog createState() => new _PUDialog();
+}
+
+class _PUDialog extends State<PUDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      child: AlertDialog(
+        backgroundColor: Color(0xff191C2B),
+        title: Text(
+          'Push-Up Usage',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'MainFont',
+            fontSize: 28,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Image.asset('Images/push.png'),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.navigate_next, color: Colors.blueAccent),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+        ],
+      ),
+      onWillPop: () {
+        setState(() {});
+      },
+    );
+  }
+}
+
+class SUDialog extends StatefulWidget {
+  @override
+  _SUDialog createState() => new _SUDialog();
+}
+
+class _SUDialog extends State<SUDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      child: AlertDialog(
+        backgroundColor: Color(0xff191C2B),
+        title: Text(
+          'Sit-Up Usage',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'MainFont',
+            fontSize: 28,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Image.asset('Images/sit.png'),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.navigate_next, color: Colors.blueAccent),
+              onPressed: () {
+                Navigator.pop(context);
               })
         ],
       ),
