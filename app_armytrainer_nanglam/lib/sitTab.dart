@@ -423,7 +423,7 @@ class _SitUpScreen extends State<SitUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     routine = ModalRoute.of(context).settings.arguments;
     if (_buildcnt == 0) {
       _stringToList();
@@ -607,7 +607,7 @@ class _SitUpScreenR extends State<SitUpScreenR> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     _sizeHeight = MediaQuery.of(context).size.height;
     _sizeWidth = MediaQuery.of(context).size.width;
     _paddingTop = MediaQuery.of(context).padding.top;
