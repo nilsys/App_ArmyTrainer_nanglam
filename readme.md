@@ -105,7 +105,7 @@
 <br/> 
 
 ## 👫팀 정보 (Team Information)
-- 진국현 (nang_lam@naver.com), Github Id: nanglam
+- 진국현 (nang_lam@naver.com), Github Id: <a href="https://github.com/nanglam">nanglam</a>, Tistory Blog : <a href="https://security-nanglam.tistory.com/">낭람</a>
 
 
 <br/>
