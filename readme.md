@@ -60,8 +60,12 @@
 
 ## 💬어플 사용법 (Getting Started)
 
+#
+
 ### Set Infomation
 <img src="Images/Setting.gif" height="300px">
+
+*최초 1회만 실행됩니다.
 
 #
 
