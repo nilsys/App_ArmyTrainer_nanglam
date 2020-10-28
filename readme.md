@@ -34,24 +34,26 @@
 ### Front-end
 - Dart(Flutter)
 ### Module / License
-- sqflite: ^1.3.1+1 / MIT
-- path_provider: ^1.6.18 / BSD
-- path: ^1.7.0 / BSD
-- all_sensors: ^0.2.3 / BSD
-- shared_preferences: ^0.5.12+2 / BSD
-- fl_chart: ^0.12.0 / BSD
-- image_picker: ^0.6.7+12 / Apache 2.0
-- image: ^2.1.18 / Apache 2.0
-- flutter_datetime_picker: ^1.4.0 / MIT
-- flutter_native_splash: ^0.1.9 / MIT
-- flutter_launcher_icons: ^0.8.1 / MIT
-- audioplayers: ^0.16.1 / MIT
+- sqflite: 1.3.1+1 / MIT
+- path_provider: 1.6.18 / BSD
+- path: 1.7.0 / BSD
+- all_sensors: 0.2.3 / BSD
+- shared_preferences: 0.5.12+2 / BSD
+- fl_chart: 0.12.0 / BSD
+- image_picker: 0.6.7+12 / Apache 2.0
+- image: 2.1.18 / Apache 2.0
+- flutter_datetime_picker: 1.4.0 / MIT
+- flutter_native_splash: 0.1.9 / MIT
+- flutter_launcher_icons: 0.8.1 / MIT
+- audioplayers: 0.16.1 / MIT
 
 
 <br/>
 
 ## ❓설치 안내 (Installation Process)
-    - ArmyTrainer.apk를 설치하면 됩니다.
+    
+👉 <a href="/osamhack2020/App_ArmyTrainer_nanglam/raw/master/ArmyTrainer.apk">ArmyTrainer.apk</a>
+
 
 
 <br/>
