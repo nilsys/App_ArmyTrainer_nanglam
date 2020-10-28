@@ -1,4 +1,4 @@
-<img src="Images/icon.png">
+![logo](Images/Icon.png)
 
 #
 ![img](https://img.shields.io/github/license/osamhack2020/App_ArmyTrainer_nanglam)
