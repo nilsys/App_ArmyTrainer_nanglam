@@ -4,36 +4,48 @@
 
 
 ## ✨팀소개 및 프로잭트 설명 동영상
-    - Flutter로 제작하여 IOS, Android 둘다 빌드가 가능한 프로젝트입니다.
-    - 푸쉬업과 싯업의 개수 측정및 운동을 도와주는 어플입니다.
+- Flutter로 제작하여 크로스 플랫폼을 지원합니다.
+(IOS, Android 둘다 빌드가 가능합니다.)
 
-## 기능 설계
+- 푸쉬업과 싯업의 운동 및 개수 측정을 도와주는 어플입니다.
+
 
 <br/>
 
-## Prerequisites
+## 📕기능 설계
+- 근접센서를 이용하여 푸시업 개수를 측정합니다.
+- 자이로센서를 이용하여 싯업 개수를 측정합니다.
+
+
+<br/>
+
+## 🙏Prerequisites
+- Android 8.0(오레오) 이상
+- Ios (맥OS가 없어 테스트 불가)
+
 
 
 <br/>
 
 ## 🔍 기술 스택 (Technique Used)
 ###  Server(Back-end)
-    - sqlite
+- sqlite
 ### Front-end
-    - Dart(Flutter)
+- Dart(Flutter)
 ### Module / License
-    - sqflite: ^1.3.1+1 / 
-    - path_provider: ^1.6.18 / BSD
-    - path: ^1.7.0 / BSD
-    - all_sensors: ^0.2.3 / BSD
-    - shared_preferences: ^0.5.12+2 / BSD
-    - fl_chart: ^0.12.0 / BSD
-    - image_picker: ^0.6.7+12 / Apache 2.0
-    - image: ^2.1.18 / Apache 2.0
-    - flutter_datetime_picker: ^1.4.0 / MIT
-    - flutter_native_splash: ^0.1.9 / MIT
-    - flutter_launcher_icons: ^0.8.1 / MIT
-    - audioplayers: ^0.16.1 / MIT
+- sqflite: ^1.3.1+1 / 
+- path_provider: ^1.6.18 / BSD
+- path: ^1.7.0 / BSD
+- all_sensors: ^0.2.3 / BSD
+- shared_preferences: ^0.5.12+2 / BSD
+- fl_chart: ^0.12.0 / BSD
+- image_picker: ^0.6.7+12 / Apache 2.0
+- image: ^2.1.18 / Apache 2.0
+- flutter_datetime_picker: ^1.4.0 / MIT
+- flutter_native_splash: ^0.1.9 / MIT
+- flutter_launcher_icons: ^0.8.1 / MIT
+- audioplayers: ^0.16.1 / MIT
+
 
 <br/>
 
@@ -43,21 +55,15 @@
 
 <br/>
 
-## 프로젝트 사용법 (Getting Started)
-**마크다운 문법을 이용하여 자유롭게 기재**
-
-잘 모를 경우
-구글 검색 - 마크다운 문법
-[https://post.naver.com/viewer/postView.nhn?volumeNo=24627214&memberNo=42458017](https://post.naver.com/viewer/postView.nhn?volumeNo=24627214&memberNo=42458017)
-
- 편한 마크다운 에디터를 찾아서 사용
- 샘플 에디터 [https://stackedit.io/app#](https://stackedit.io/app#)
+## 💬프로젝트 사용법 (Getting Started)
+- 발표 ppt 참고
 
 
 <br/> 
 
-## 👀팀 정보 (Team Information)
+## 👫팀 정보 (Team Information)
 - 진국현 (nang_lam@naver.com), Github Id: nanglam
+
 
 <br/>
 
