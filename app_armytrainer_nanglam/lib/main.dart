@@ -121,9 +121,8 @@ class _MyApp extends State<MyApp> with TickerProviderStateMixin {
                             flex: 1,
                             child: SizedBox(height: 48),
                           ),
-                          SizedBox(
-                            width: 235,
-                            height: 35,
+                          Expanded(
+                            flex: 3,
                             child: TabBar(
                               tabs: list,
                               controller: _tabController,
