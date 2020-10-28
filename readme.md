@@ -39,7 +39,7 @@
 - sqlite
 ### Front-end
 - Dart(Flutter)
-### Module / License
+### Module: Version / License
 - sqflite: 1.3.1+1 / MIT
 - path_provider: 1.6.18 / BSD
 - path: 1.7.0 / BSD
@@ -66,7 +66,6 @@
 
 ## 💬어플 사용법 (Getting Started)
 
-#
 
 ### Set Infomation
 <img src="Images/Setting.gif" height="300px">
