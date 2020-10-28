@@ -87,6 +87,13 @@
 
 #
 
+### Reset Routine
+
+<img src="Images/ResetRoutine.gif" height="300px">
+
+#
+
+
 <br/>
 <br/>
 <br/> 
