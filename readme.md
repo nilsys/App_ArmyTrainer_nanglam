@@ -52,7 +52,7 @@
 
 ## ❓설치 안내 (Installation Process)
     
-👉 <a href="/osamhack2020/App_ArmyTrainer_nanglam/raw/master/ArmyTrainer.apk">ArmyTrainer.apk</a>
+👉 <a href="https://github.com/osamhack2020/App_ArmyTrainer_nanglam/raw/master/ArmyTrainer.apk">ArmyTrainer.apk</a>
 
 
 
