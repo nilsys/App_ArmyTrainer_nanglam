@@ -1,4 +1,5 @@
 ![Logo Image](/Images/icon.png)
+
 #
 ![img](https://img.shields.io/github/license/osamhack2020/App_ArmyTrainer_nanglam)
 
@@ -33,7 +34,7 @@
 ### Front-end
 - Dart(Flutter)
 ### Module / License
-- sqflite: ^1.3.1+1 / 
+- sqflite: ^1.3.1+1 / MIT
 - path_provider: ^1.6.18 / BSD
 - path: ^1.7.0 / BSD
 - all_sensors: ^0.2.3 / BSD
