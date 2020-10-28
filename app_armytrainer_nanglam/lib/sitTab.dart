@@ -357,7 +357,10 @@ class _SitUpScreen extends State<SitUpScreen> {
       <StreamSubscription<dynamic>>[];
   String _text = "";
   void updateState(bool state) {
-    setState(() => _state = state);
+    setState(() {
+      _state = state;
+      _gyroState = state;
+    });
   }
 
   _stringToList() {
@@ -412,7 +415,7 @@ class _SitUpScreen extends State<SitUpScreen> {
               }
             }
           } else if (_gyroscopeValues[1] > 1.5) {
-            if (_gyroState) {
+            if (!_gyroState) {
               _gyroState = true;
             }
           }
@@ -534,7 +537,7 @@ class _SitUpScreenR extends State<SitUpScreenR> {
   int _profileAge;
   int _sitrecord;
 
-  loadVale() async {
+  _loadVale() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _profileAge = (prefs.getInt('profileAge') ?? 0);
@@ -556,8 +559,8 @@ class _SitUpScreenR extends State<SitUpScreenR> {
                 in _streamSubscriptions) {
               subscription.cancel();
             }
-            _levelText = _loadSitLevel();
             _sitrecord = _count;
+            _levelText = _loadSitLevel();
           } else {
             _time--;
           }
@@ -581,6 +584,7 @@ class _SitUpScreenR extends State<SitUpScreenR> {
   @override
   void initState() {
     super.initState();
+    _loadVale();
     _streamSubscriptions.add(gyroscopeEvents.listen((GyroscopeEvent event) {
       setState(() {
         _gyroscopeValues = <double>[event.x, event.y, event.z];
