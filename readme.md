@@ -4,7 +4,7 @@
 ![img](https://img.shields.io/github/license/osamhack2020/App_ArmyTrainer_nanglam)
 
 
-## ✨팀소개 및 프로잭트 설명 동영상
+## ✨프로잭트 설명
 - Flutter로 제작하여 크로스 플랫폼을 지원합니다.
 (IOS, Android 둘다 빌드가 가능합니다.)
 
@@ -13,7 +13,7 @@
 
 <br/>
 
-## 📕기능 설계
+## 📕측정 방식
 - 근접센서를 이용하여 푸시업 개수를 측정합니다.
 - 자이로센서를 이용하여 싯업 개수를 측정합니다.
 
@@ -58,10 +58,25 @@
 
 <br/>
 
-## 💬프로젝트 사용법 (Getting Started)
-- 발표 ppt 참고
+## 💬어플 사용법 (Getting Started)
 
+### Set Infomation
+<img src="Images/Setting.gif" height="300px">
 
+#
+
+### Add Routine
+
+<img src="Images/AddRoutine.gif" height="300px">
+
+#
+
+### Remove Routine
+
+<img src="Images/RemoveRoutine.gif" height="300px">
+
+<br/>
+<br/>
 <br/> 
 
 ## 👫팀 정보 (Team Information)
