@@ -75,6 +75,14 @@
 
 <img src="Images/RemoveRoutine.gif" height="300px">
 
+#
+
+### Modify Profile
+
+<img src="Images/ModifyProfile.gif" height="300px">
+
+#
+
 <br/>
 <br/>
 <br/> 
