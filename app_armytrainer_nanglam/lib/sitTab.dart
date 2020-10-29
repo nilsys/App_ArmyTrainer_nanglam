@@ -600,7 +600,7 @@ class _SitUpScreenR extends State<SitUpScreenR> {
             _count++;
             _gyroState = false;
           }
-        } else if (_gyroscopeValues[1] > 2.5) {
+        } else if (_gyroscopeValues[1] > 1.5) {
           if (!_gyroState) {
             _gyroState = true;
           }
