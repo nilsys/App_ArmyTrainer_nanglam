@@ -90,6 +90,12 @@
 
 #
 
+### Change Routine
+
+<img src="Images/ChangeRoutine.gif" height="300px">
+
+#
+
 ### Remove Routine
 
 <img src="Images/RemoveRoutine.gif" height="300px">
